@@ -1,19 +1,34 @@
-Os Maias, livro, Eça de Queiroz, português, inglês, romance, escreveu, autor, nacionalidade, tipo, ficção 
+/* Nacionality */
+
+nacionality('Eça de Queiroz', 'portuguese').
+nacionality('Camilo Castelo Branco', 'portuguese').
+nacionality('George Orwell', 'english').
+nacionality('Fernando Pessoa', 'portuguese').
+nacionality('J. R. R. Tolkien', 'english').
+
+/* Genre */ 
+genre('Os Maias', 'romance').
+genre('Amor de Perdição', 'romance').
+genre('1984', 'novel').
+genre('Mensagem', 'poetry').
+genre('Lord of the Rings', 'fiction').
 
 /* Author */
 
-autor('Os Maias', 'Eça de Queiroz').
-
-/* Nacionality */
-
-nacionalidade('Eça de Queiroz', 'português').
-
-tipo('Os Maias', 'romance')
+author('Os Maias', 'Eça de Queiroz').
+author('Amor de Perdição', 'Camilo Castelo Branco').
+author('1984', 'George Orwell').
+author('Mensagem', 'Fernando Pessoa').
+author('Lord of the Rings', 'J. R. R. Tolkien').
 
 /* 3. a) */
 
-?- autor('Os Maias', X).
+?- author('Os Maias', X).
 
 /* 3. b) */
 
+?- nacionality(X, 'portuguese'), author(_Y, X), genre(_, 'romance').
+
 /* 3. c) */
+
+?- genre(_X, 'fiction'), author(_X, Y), author(_Z, Y), genre(_Z, _W), _W \== 'fiction'.
