@@ -48,8 +48,8 @@ gates('Porto', 5).
 
 /* Team victory conditions */
 
-team_victory(X, Y) :- 
-    pilot_victory(X, Z), team(Z, X).
+team_victory(Team, Circuit) :- 
+    pilot_victory(Pilot, Circuit), team(Pilot, Team).
 
 /* 2. a) */
 
@@ -61,6 +61,12 @@ team_victory(X, Y) :-
 
 /* 2. c) */
 
+?- pilot_victory(Circuit1, Pilot), pilot_victory(Circuit2, Pilot), Circuit1 \== Circuit2.
+
 /* 2. d) */
 
+?- gates(Circuit, X), X > 8.
+
 /* 2. e) */
+
+?- plane(Pilot, Plane), Plane \== 'Edge540'.

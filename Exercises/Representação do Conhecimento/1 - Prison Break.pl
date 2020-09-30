@@ -27,3 +27,5 @@ parent('Ella Scofield', 'Sara Tancredi').
 ?- parent(X, 'Michael Scofield').
 
 /* 1. b) */
+
+?- parent('Aldo Burrows', X).
