@@ -31,4 +31,4 @@ author('Lord of the Rings', 'J. R. R. Tolkien').
 
 /* 3. c) */
 
-?- genre(_X, 'fiction'), author(_X, Y), author(_Z, Y), genre(_Z, _W), _W \== 'fiction'.
+?- genre(_X, 'fiction'), author(_X, Y), author(_Z, Y), \+genre(_Z, 'fiction').

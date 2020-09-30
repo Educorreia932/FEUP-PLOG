@@ -69,4 +69,4 @@ team_victory(Team, Circuit) :-
 
 /* 2. e) */
 
-?- plane(Pilot, Plane), Plane \== 'Edge540'.
+?- \+plane(Pilot, 'Edge540').
