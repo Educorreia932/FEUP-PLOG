@@ -8,7 +8,7 @@
 
 % Initial Configuration of Board
 board([
-    [[w, 5], [], [], [], [], []],
+    [['W', '5'], [], [], [], [], []],
     [[], [], [], [], [], []],
     [[], [], [], [], [], []],
     [[], [], [], [], [], []],
@@ -34,10 +34,10 @@ display_board :-
 generate_board.
 
 % Convert piece type to output
-piece([], '.'). % Empty
-piece([b|T], 'B'). % Black
-piece([g|T], 'G'). % Green
-piece([w|T], 'W'). % White    
+piece([], '..'). % Empty
+
+piece(List, Piece) :-
+    atom_chars(Piece, List).
 
 display_game :-
     write('Board').
