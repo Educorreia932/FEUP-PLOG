@@ -18,7 +18,8 @@ board([
 
 display_row([]).
 display_row([A|B]) :-
-    write(A),
+    piece(A, Piece),
+    write(Piece),
     display_row(B).
 
 display_board([]).
@@ -26,10 +27,14 @@ display_board([H|T]) :-
     display_row(H), nl,
     display_board(T).
 
+display_board :-
+    board(X),
+    display_board(X).
+
 generate_board.
 
 % Convert piece type to output
-piece([], ' '). % Empty
+piece([], '.'). % Empty
 piece([b|T], 'B'). % Black
 piece([g|T], 'G'). % Green
 piece([w|T], 'W'). % White    
