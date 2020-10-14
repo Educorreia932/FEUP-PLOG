@@ -6,9 +6,12 @@
 % value(+GameState, +Player, -Value).
 % choose_move(+GameState, +Player, +Level, -Move).
 
+
+
+
 % Initial Configuration of Board
 board([
-    [['W', '5'], [], [], [], [], []],
+    [[], [], [], [], [], []],
     [[], [], [], [], [], []],
     [[], [], [], [], [], []],
     [[], [], [], [], [], []],
@@ -16,11 +19,13 @@ board([
     [[], [], [], [], [], []]
 ]).
 
+% Display game board
+
 display_row([]).
-display_row([A|B]) :-
-    piece(A, Piece),
-    write(Piece),
-    display_row(B).
+display_row([H|T]) :-
+    stack(H, Stack),
+    write(Stack),
+    display_row(T).
 
 display_board([]).
 display_board([H|T]) :-
@@ -31,12 +36,40 @@ display_board :-
     board(X),
     display_board(X).
 
-generate_board.
+% Generate game board, filling it with pieces
 
-% Convert piece type to output
-piece([], '..'). % Empty
+piece(0, 'B').
+piece(1, 'G').
+piece(2, 'W').
 
-piece(List, Piece) :-
+generate_piece(Piece) :-
+    % random(0, 3, PieceNumber),
+    piece(0, Piece).
+
+generate_row([]).
+
+generate_row([H|T]) :-
+    generate_piece(Piece),
+    assert(row([H|[Piece, 0]|T])),
+    generate_row(T),
+    write(row(X)).
+
+generate_board :- 
+    board(X),
+    generate_row(X).
+
+    % retract
+    % assert
+
+
+
+
+
+% Convert stack type to output
+
+stack([], '..'). % Empty
+
+stack(List, Piece) :-
     atom_chars(Piece, List).
 
 display_game :-
