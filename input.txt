@@ -1,0 +1,2 @@
+consult('game.pl').
+display_board.
