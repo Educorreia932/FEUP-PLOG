@@ -1,44 +1,58 @@
-# PLOG Project - T3G3
-## Green-Greener-Greenest
+# Green-Greener-Greenest ⚪🟢⚫
 
-The game is composed of three different smaller games, all following the same basic ruleset.
+![Green-Greener-Greenest Title](https://i.imgur.com/4i4ARI1.png)
 
-## Green
+## PLOG Project
 
-**Green** is the first game of the Green-Greener-Greenest set. Green is a game for 3 players derived from The House of the Flying Blades and brother game of RED and BLUE, by the same designer, that uses a non-transitive capturing mechanism.
+This project was developed by *Greener1 / Class 4*, of which the members are:
 
-The board starts full of pyramids. Players in turn capture (mandatory) other pyramids or stacks of pyramids orthogonally so that:
+- Ana Inês Oliveira de Barros (*up201806593*)
+- Eduardo da Costa Correia (*up201806433*)
 
-- Black can only capture Green
-- Green can only capture White
-- White can only capture Black
+## Material
 
-The game ends when all players pass in succession. The player with the highest combined height of controlled stacks wins the game.
+**Basic:** a 6×6 board, 15 black pyramids, 20 green pyramids, 15 white pyramids.
+
+**Advanced:** a 6×9 – 9×9 board, 30 black pyramids, 45 green pyramids, 30 white pyramids.
+
+## Definition
+
+A **stack** is either one pyramid or several pyramids stacked on top of each other.
+It is controlled by the colour of the topmost pyramid. 
+So a White ⚪ stack is a stack of any height with a white pyramid on top, and so on...
+![Green Piece](https://i.imgur.com/mzhaAoK.png) ![White Stack](https://i.imgur.com/JNdW84d.png)
 
 ## Greener
-
 **Greener** is a capturing game for 2 players, where both must capture the same colour.
+![](https://i.imgur.com/pbPubs2.png)
 
-Depending on the set, you’d have:
+### Setup
 
-Basic: a 6×6 board, 15 black pyramids, 20 green pyramids, 15 white pyramids.
+The board starts full of pyramids, randomly placed. 
+Each player has an allocated colour (Black ⚫ / White ⚪) and they control every piece or stack of their respective color.
+Green 🟢 is a neutral colour.
 
-Advanced: a 6×9 – 9×9 board (using one or both pads), 30 black pyramids, 45 green pyramids, 30 white pyramids.
+![Setup Example](https://i.imgur.com/1dL0lk8.png)
 
-Gameplay overview:
+### How to play
 
-The board starts full of pyramids. Players take turns capturing pyramids or stacks of any colour orthogonally.
+Players take turns (starting by Black ⚫) capturing pyramids or stacks of any colour orthogonally (on the same row or collumn and with no stacks between them).
+On your turn you must make one capture if possible, otherwise you pass the turn.
+The game ends when all players pass in succession.
+The player with the most green  pyramids captured (being part of stacks they control) wins the game. 
+In case of a tie, the player with the highest stack wins. If the tie persists, play again.
 
-The game ends when all players pass in succession. The player with the most green pyramids captured (being part of stacks they control) wins the game. In case of a tie, the player with the highest stack wins. If the tie persists, play again.
+### Gameplay Overview
 
-Please refer to the rulebook for detailed rules.
+Here's an example of a typical turn in the game.
+In this case, it's the black player's turn, so they could move either the stack **c** or **a**.
+In this case, they could capture the stack  **b**, **c**,, **d** or **e**, but not **f** because **e** is in between.
+Capturing **b** is the best move Black ⚫ can make, since it not only gives him one more green piece, it also forfeits White's ⚪ control of that stack.
 
-## Greenest
+![Capturing](https://i.imgur.com/uhzJ3N3.png)
 
-**Greenest** is a solo game.
+## Useful Links
 
-Setup the board as in Green. The goal of the game is to end up with a single stack, by making captures also as in Green (Black can only capture Green and so on), but in any order. This is, you can capture several times with the same colour, or reverse the order.
-
-Whether all initial configurations are solvable or not still remains an open question. Your feedback on this will be greatly appreciated.
-
+- [BoardGameGeek entry](https://boardgamegeek.com/boardgame/227145/greengreenergreenest)
+- [Official Rules](https://nestorgames.com/rulebooks/GREENGREENERGREENEST_EN.pdf)
 

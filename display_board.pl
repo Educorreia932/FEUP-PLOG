@@ -9,6 +9,8 @@
 :- use_module(library(random)).
 
 % Initial Configuration of Board
+:- dynamic(board/1).
+
 board([
     [[w, 1], [w , 1], [], [], [], []],
     [[], [b, 3], [], [], [b, 1], []],
@@ -29,13 +31,8 @@ display_piece(H) :-
 
 display_piece(H) :-
     piece(H, CharCode),
-    CharCode \= 128994,
     put_code(CharCode),
     put_code(32).
-
-display_piece(H) :-
-    piece(H, CharCode),
-    put_code(CharCode).
 
 display_top_middle([H|[]]).
 

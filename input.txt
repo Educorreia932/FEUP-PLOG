@@ -1,2 +1,2 @@
-consult('game.pl').
-display_board.
+consult('display_board.pl').
+generate_board.
