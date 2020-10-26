@@ -14,10 +14,13 @@
 piece([w], 9651). % △
 piece([g], 9709). % ◭
 piece([b], 9650). % ▲
+piece([w, _], 9651). % △
+piece([g, _], 9709). % ◭
+piece([b, _], 9650). % ▲
 piece([], 32).
 
 board([
-    [[w], [w], [], [], [], []],
+    [[w, w], [w], [], [], [], []],
     [[], [b], [], [], [b], []],
     [[], [], [], [b], [], []],
     [[b], [w], [], [b], [], []],
@@ -27,7 +30,7 @@ board([
 
 % Display game board
 
-display_piece(H) :-
+display_stack(H) :-
     piece(H, CharCode),
     CharCode == 32,
     put_code(CharCode),
@@ -35,11 +38,13 @@ display_piece(H) :-
     put_code(CharCode),
     put_code(CharCode).
 
-display_piece(H) :-
+display_stack(H) :-
     piece(H, CharCode),
     put_code(32),
     put_code(CharCode),
-    put_code(53),
+    length(H, N), 
+    N1 is N + 48,
+    put_code(N1),
     put_code(32).
 
 display_collumn_id([], _ID).
@@ -81,7 +86,7 @@ display_row_id(ID) :-
 display_row_middle([]).
 
 display_row_middle([H|T]) :-
-    display_piece(H),
+    display_stack(H),
     put_code(9474), % │
     display_row_middle(T).
 
