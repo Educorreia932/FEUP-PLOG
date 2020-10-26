@@ -1,3 +1,14 @@
+% Initial Configuration of Board
+
+initial([
+    [[w, w], [w], [], [], [], []],
+    [[], [b], [], [], [b], []],
+    [[], [], [], [b], [], []],
+    [[b], [w], [], [b], [], []],
+    [[], [w], [], [], [], []],
+    [[], [], [], [g], [], []]
+]).
+
 % Generate game board, filling it with pieces
 
 generate_piece(Piece) :-

@@ -1,32 +1,12 @@
-% play().
-% initial(-GameState).
-% valid_moves(+GameState, +Player, -ListOfMoves).
-% move(+GameState, +Move, -NewGameState).
-% game_over(+GameState, -Winner).
-% value(+GameState, +Player, -Value).
-% choose_move(+GameState, +Player, +Level, -Move).
-
 :- use_module(library(random)).
 
-% Initial Configuration of Board
-:- dynamic(board/1).
-
 piece([w], 9651). % △
-piece([g], 9709). % ◭
-piece([b], 9650). % ▲
 piece([w, _], 9651). % △
+piece([g], 9709). % ◭
 piece([g, _], 9709). % ◭
+piece([b], 9650). % ▲
 piece([b, _], 9650). % ▲
 piece([], 32).
-
-board([
-    [[w, w], [w], [], [], [], []],
-    [[], [b], [], [], [b], []],
-    [[], [], [], [b], [], []],
-    [[b], [w], [], [b], [], []],
-    [[], [w], [], [], [], []],
-    [[], [], [], [g], [], []]
-]).
 
 % Display game board
 
@@ -154,7 +134,5 @@ display_board([H|T]) :-
     display_board_middle([H|T], 49),
     display_bottom(H).
 
-display_board :-
-    board(X),
-    display_board(X).
-
+display_game(_GameState, _Player) :-
+    display_board(_GameState).

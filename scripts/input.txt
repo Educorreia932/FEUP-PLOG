@@ -1,0 +1,2 @@
+consult('../src/game.pl').
+play.

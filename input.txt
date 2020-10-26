@@ -1,2 +1,0 @@
-consult('display_board.pl').
-display_board.
