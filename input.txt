@@ -1,2 +1,2 @@
 consult('display_board.pl').
-generate_board.
+display_board.

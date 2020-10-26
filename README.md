@@ -23,8 +23,8 @@ So a White ⚪ stack is a stack of any height with a white pyramid on top, and s
 ![Green Piece](https://i.imgur.com/mzhaAoK.png) ![White Stack](https://i.imgur.com/JNdW84d.png)
 
 ## Greener
-**Greener** is a capturing game for 2 players, where both must capture the same colour.
 ![](https://i.imgur.com/pbPubs2.png)
+**Greener** is a capturing game for 2 players, where both must capture the same colour.
 
 ### Setup
 
@@ -56,3 +56,5 @@ Capturing **b** is the best move Black ⚫ can make, since it not only gives him
 - [BoardGameGeek entry](https://boardgamegeek.com/boardgame/227145/greengreenergreenest)
 - [Official Rules](https://nestorgames.com/rulebooks/GREENGREENERGREENEST_EN.pdf)
 
+
+NOTE: Cascadia Mono / Cascadia Coe Lucida COnsole FOnt / 
