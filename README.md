@@ -13,17 +13,16 @@ This project was developed by *Greener1 / Class 4*, of which the members are:
 
 **Basic:** a 6×6 board, 15 black pyramids, 20 green pyramids, 15 white pyramids.
 
-**Advanced:** a 6×9 – 9×9 board, 30 black pyramids, 45 green pyramids, 30 white pyramids.
-
 ## Definition
 
 A **stack** is either one pyramid or several pyramids stacked on top of each other.
 It is controlled by the colour of the topmost pyramid. 
 So a White ⚪ stack is a stack of any height with a white pyramid on top, and so on...
-![Green Piece](https://i.imgur.com/mzhaAoK.png) ![White Stack](https://i.imgur.com/JNdW84d.png)
+![Green Piece](images/GreenPiece.png) ![White Stack](images/WhiteStack.png)
 
 ## Greener
-![](https://i.imgur.com/pbPubs2.png)
+![Greener Title](images/Greener.png)
+
 **Greener** is a capturing game for 2 players, where both must capture the same colour.
 
 ### Setup
@@ -56,5 +55,25 @@ Capturing **b** is the best move Black ⚫ can make, since it not only gives him
 - [BoardGameGeek entry](https://boardgamegeek.com/boardgame/227145/greengreenergreenest)
 - [Official Rules](https://nestorgames.com/rulebooks/GREENGREENERGREENEST_EN.pdf)
 
+## Game Structure
 
-NOTE: Cascadia Mono / Cascadia Coe Lucida COnsole FOnt / 
+To internally store the gamestate we used a list of lists that represents the board cells and the stacks in each one of them.  
+
+
+
+
+## Game Representation
+
+Our representation uses several Unicode characters and has to be monospaced font, so we recommend using Cascadia Mono, that already comes with the default SicStus installation.
+
+We included some mockups for comparison and better visualization.
+
+### Legend 
+
+- △ - White Piece
+- ◭ - Green Piece
+- ▲ - Black Piece
+
+![](images/1.png)
+![](images/2.png)
+![](images/3.png)

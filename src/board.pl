@@ -1,12 +1,14 @@
+:- use_module(library(random)).
+
 % Initial Configuration of Board
 
 initial([
-    [[w, w], [w], [], [], [], []],
-    [[], [b], [], [], [b], []],
-    [[], [], [], [b], [], []],
-    [[b], [w], [], [b], [], []],
-    [[], [w], [], [], [], []],
-    [[], [], [], [g], [], []]
+    [[w], [g], [g], [w], [g], [b]],
+    [[b], [g], [g], [g], [w], [w]],
+    [[g], [w], [w], [g], [b], [b]],
+    [[g], [b], [b], [g], [g], [g]],
+    [[b], [g], [g], [w], [b], [g]],
+    [[g], [w], [b], [g], [w], [g]]
 ]).
 
 % Generate game board, filling it with pieces
