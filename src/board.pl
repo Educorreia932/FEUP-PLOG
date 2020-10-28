@@ -1,33 +1,33 @@
 :- use_module(library(random)).
+:- use_module(library(system)).
 
 % Initial Configuration of Board
 
-initial([
-    [[w], [g], [g], [w], [g], [b]],
-    [[b], [g], [g], [g], [w], [w]],
-    [[g], [w], [w], [g], [b], [b]],
-    [[g], [b], [b], [g], [g], [g]],
-    [[b], [g], [g], [w], [b], [g]],
-    [[g], [w], [b], [g], [w], [g]]
-]).
+:- dynamic(initial/1).
+:- dynamic(remaining_pieces/3).
+
+piece(0, 'w').
+piece(1, 'g').
+piece(2, 'b').
+
+pieces(['w', 'w', 'w', 'w', 'w', 'w', 'w', 'w', 'w',
+        'g', 'g', 'g', 'g', 'g', 'g', 'g', 'g', 'g', 'g', 'g', 'g', 'g', 'g', 'g', 'g', 'g', 'g',
+        'b', 'b', 'b', 'b', 'b', 'b', 'b', 'b', 'b']).
 
 % Generate game board, filling it with pieces
 
-generate_piece(Piece) :-
-    random(0, 3, PieceNumber),
-    piece(PieceNumber, Piece).
+fill_board([], _).
 
-generate_row([]).
+fill_board([H0, H1, H2, H3, H4, H5|T], [[[H0], [H1], [H2], [H3], [H4], [H5]]|T1]) :-
+    fill_board(T, T1).
 
-generate_row([_H|T]) :-
-    generate_piece(Piece),
-    assert(row([[Piece, 0]|T])),
-    generate_row(T),
-    write(row(_X)). 
+shuffle_board(Shuffled) :-
+    pieces(P),
+    random_permutation(P, Shuffled).
 
-generate_board :- 
-    board(X),
-    generate_row(X).
-
-    % retract
-    % assert
+generate_board :-
+    now(T),
+    setrand(T),
+    shuffle_board(Shuffled),
+    fill_board(Shuffled, Board),
+    assert(initial(Board)).

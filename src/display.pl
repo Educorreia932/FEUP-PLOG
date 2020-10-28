@@ -10,30 +10,30 @@ count([X|T], C, N) :-
     X \= C, 
     count(T, C, N).
 
-piece([w], 9651). % △
-piece([w, _], 9651). % △
-piece([g], 9709). % ◭
-piece([g, _], 9709). % ◭
-piece([b], 9650). % ▲
-piece([b, _], 9650). % ▲
-piece([], 32).
+character([w], 9651). % △
+character([w, _], 9651). % △
+character([g], 9709). % ◭
+character([g, _], 9709). % ◭
+character([b], 9650). % ▲
+character([b, _], 9650). % ▲
+character([], 32).
 
-color([w], '[0m').
-color([w, _], '[0m').
-color([g], '[32m').
-color([g, _], '[32m').
-color([b], '[90m').
-color([b, _], '[90m'). 
+color([w], '[1;0m').
+color([w, _], '[1;0m').
+color([g], '[1;32m').
+color([g, _], '[1;32m').
+color([b], '[1;90m').
+color([b, _], '[1;90m'). 
 
 % Display game board
 
 display_stack(H) :-
-    piece(H, CharCode),
+    character(H, CharCode),
     CharCode == 32,
-    put_code_n(CharCode, 4).
+    put_code_n(CharCode, 5).
 
 display_stack(H) :-
-    piece(H, CharCode),
+    character(H, CharCode),
     put_code(32),
     count(H, 'g', GreenPieces), % Count the number of green pieces in the stack
     G is GreenPieces + 48,
