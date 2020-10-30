@@ -10,34 +10,28 @@ count([X|T], C, N) :-
     X \= C, 
     count(T, C, N).
 
-character([w], 9651). % △
-character([w, _], 9651). % △
-character([g], 9709). % ◭
-character([g, _], 9709). % ◭
-character([b], 9650). % ▲
-character([b, _], 9650). % ▲
+character([w| _], 9651). % △
+character([g| _], 9709). % ◭
+character([b| _], 9650). % ▲
 character([], 32).
 
-color([w], '[1;0m').
-color([w, _], '[1;0m').
-color([g], '[1;32m').
-color([g, _], '[1;32m').
-color([b], '[1;90m').
-color([b, _], '[1;90m'). 
+color([w| _], '[1;0m').
+color([g| _], '[1;32m').
+color([b| _], '[1;90m'). 
 
 % Display game board
 
 display_stack(H) :-
     character(H, CharCode),
     CharCode == 32,
-    put_code_n(CharCode, 5).
+    put_code_n(CharCode, 7).
 
 display_stack(H) :-
     character(H, CharCode),
-    put_code(32),
     count(H, 'g', GreenPieces), % Count the number of green pieces in the stack
-    G is GreenPieces + 48,
-    put_code(G),
+    (GreenPieces < 10 -> put_code(32); true),
+    put_code(32),
+    print(GreenPieces),
     color(H, Color), 
     put_code(27),
     print(Color), % Apply color to piece
@@ -45,16 +39,16 @@ display_stack(H) :-
     put_code(27),
     print('[0m'), % Reset color
     length(H, N), 
-    N1 is N + 48,
-    put_code(N1),
+    print(N),
+    (N < 10 -> put_code(32); true),
     put_code(32).
 
 display_collumn_id([], _ID).
 
 display_collumn_id([_H|T], ID) :-
-    put_code_n(32, 3),
+    put_code_n(32, 4),
     put_code(ID),
-    put_code_n(32, 2),
+    put_code_n(32, 3),
     ID1 is ID + 1,
     display_collumn_id(T, ID1).
 
@@ -69,7 +63,7 @@ put_code_n(C, N) :-
 display_top_middle([_H|[]]).
 
 display_top_middle([_H|T]) :-
-    put_code_n(9472, 5), % ─
+    put_code_n(9472, 7), % ─
     put_code(9516), % ┬
     display_top_middle(T).
 
@@ -78,7 +72,7 @@ display_top([H|T]) :-
     put_code(32),
     put_code(9484), % ┌
     display_top_middle([H|T]),
-    put_code_n(9472, 5), % ─
+    put_code_n(9472, 7), % ─
     put_code(9488). % ┐
 
 display_row_id(ID) :-
@@ -100,7 +94,7 @@ display_row([H|T], ID) :-
 display_line_middle([_H|[]]).
 
 display_line_middle([_H|T]) :-
-    put_code_n(9472, 5), % ─
+    put_code_n(9472, 7), % ─
     put_code(9532), % ┼
     display_line_middle(T).
 
@@ -109,13 +103,13 @@ display_line([H|T]) :-
     put_code(32),
     put_code(9474), % │
     display_line_middle([H|T]),
-    put_code_n(9472, 5), % ─
+    put_code_n(9472, 7), % ─
     put_code(9474). % │
 
 display_bottom_middle([_H|[]]).
 
 display_bottom_middle([_H|T]) :-
-    put_code_n(9472, 5), % ─
+    put_code_n(9472, 7), % ─
     put_code(9524), % ┴
     display_bottom_middle(T).
 
@@ -124,7 +118,7 @@ display_bottom([H|T]) :-
     put_code(32),
     put_code(9492), % └
     display_bottom_middle([H|T]),
-    put_code_n(9472, 5), % ─
+    put_code_n(9472, 7), % ─
     put_code(9496). % ┘
 
 display_board_middle([H|[]], _ID) :-
