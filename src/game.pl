@@ -2,4 +2,4 @@
 :- consult('board.pl').
 :- consult('display.pl').
 
-game :- play.
+game :- play. % Starts game

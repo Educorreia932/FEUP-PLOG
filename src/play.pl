@@ -1,4 +1,4 @@
 play :-
-    generate_board,
-    initial(GameState),
-    display_game(GameState, _).
+    generate_board, % Generates a board
+    initial(GameState), % Unifies GameState
+    display_game(GameState, _). % Displays the GameState
