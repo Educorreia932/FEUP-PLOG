@@ -18,8 +18,8 @@ This project was developed by *Greener1 / Class 4*, of which the members are:
 
 ### Material
 
-**Basic:** a 6×6 board, 15 black pyramids, 20 green pyramids, 15 white pyramids.
-
+**Basic:** a 6×6 board, 9 black pyramids, 18 green pyramids, 9 white pyramids.
+**Advanced:** a 9×9 board, 20 black pyramids, 41 green pyramids, 20 white pyramids.
 
 ### Definition
 
