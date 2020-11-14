@@ -10,7 +10,7 @@
 
 build(_, 0, _).
 
-build(X, N, [X|T]) :- 
+build(X, N, [X|T]) :-   
     N1 is N - 1,
     build(X, N1, T).
 
@@ -25,9 +25,13 @@ pieces(W, G, B, Pieces) :-
 
 % Returns a shuffled list from a list of pieces
 
-shuffle_board(Shuffled) :-
-    pieces(9, 18, 9, Pieces),
-    random_permutation(Pieces, Shuffled).
+shuffle_board(Shuffled, Collumns, Rows) :-
+    Size = Collumns * Rows,                 % Calculates size of board
+    W is div(Size, 4),                      % Calculates number of white pieces
+    B = W,                                  % Number of black pieces is the same as white pieces
+    G = Size - (W + B),                     % Calculates number of green pieces
+    pieces(W, G, B, Pieces),                % Creates list with all pieces
+    random_permutation(Pieces, Shuffled).   % Shuffles list of pieces.
 
 % Fills a row with pieces
 
@@ -48,9 +52,9 @@ fill_board(Pieces, Collumns, Rows, Board) :-
 
 % Generates random game board, filling it with pieces
 
-generate_board :-
-    now(T),                             % Seed for RNG
-    setrand(T),                         % For randomness 
-    shuffle_board(Shuffled),            % Shuffles all pieces from the list
-    fill_board(Shuffled, 6, 6, Board),  % Fills board with the pieces from list
+generate_board(Collumns, Rows) :-
+    now(T),                                             s% Seed for RNG
+    setrand(T),                                         % For randomness 
+    shuffle_board(Shuffled, Collumns, Rows),            % Shuffles all pieces from the list
+    fill_board(Shuffled, Collumns, Rows, Board),        % Fills board with the pieces from list
     assert(initial(Board)).

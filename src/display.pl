@@ -160,12 +160,12 @@ display_board_middle([H|T], ID) :-
 % Displays the board of the game
 
 display_board([H|T]) :-
-    put_code(32),   % Space
-    put_code(32),   % Space
-    display_collumn_id(H, 65), nl, % Displays collumns ids (A, B, C...)
-    display_top(H), nl, % Displays the top of the board
-    display_board_middle([H|T], 49), % Displays the middle of the board
-    display_bottom(H). % Displays the bottom of the board
+    put_code(32),                      % Space
+    put_code(32),                      % Space
+    display_collumn_id(H, 65), nl,     % Displays collumns ids (A, B, C...)
+    display_top(H), nl,                % Displays the top of the board
+    display_board_middle([H|T], 49),   % Displays the middle of the board
+    display_bottom(H).                 % Displays the bottom of the board
 
 % Displays the game at a certain state
 display_game(_GameState, _Player) :-

@@ -44,14 +44,21 @@ table_menu:-
     print('================================================'), nl.
 
 process_table_menu_input(4) :- !.
-process_table_menu_input(N) :- 
-    generate_board, % Generates a board
-    initial(GameState), % Unifies GameState
-    display_game(GameState, _). % Displays the GameState.
 
-% process_table_menu_input(1) :- .
-% process_table_menu_input(2) :- .
-% process_table_menu_input(3) :- .
+process_table_menu_input(1) :- 
+    generate_board(6, 6),               % Generates a board
+    initial(GameState),                 % Unifies GameState
+    display_game(GameState, _), !.      % Displays the GameState
+
+process_table_menu_input(2) :- 
+    generate_board(6, 9),               % Generates a board
+    initial(GameState),                 % Unifies GameState
+    display_game(GameState, _), !.      % Displays the GameState
+
+process_table_menu_input(3) :- 
+    generate_board(9, 9),               % Generates a board
+    initial(GameState),                 % Unifies GameState
+    display_game(GameState, _), !.      % Displays the GameState
 
 % Prints instructions of game
 instructions :-
