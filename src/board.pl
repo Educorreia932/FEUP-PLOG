@@ -1,5 +1,8 @@
+:- consult('utils.pl').
+
 :- use_module(library(random)).
 :- use_module(library(system)).
+:- use_module(library(lists)).
 
 % Initial Configuration of Board
 
@@ -12,28 +15,42 @@ build(X, N, [X|T]) :-
     build(X, N1, T).
 
 % List of all pieces
+
 pieces(W, G, B, Pieces) :-
     build(w, W, L1),
     build(g, G, L2),
     build(b, B, L3),
-    append(L1, L2, L12),
-    append(L12, L3, Pieces).
-
-% Fills board row by row using a list of pieces
-fill_board([], _).
-
-fill_board([H0, H1, H2, H3, H4, H5|T], [[[H0], [H1], [H2], [H3], [H4], [H5]]|T1]) :-
-    fill_board(T, T1).
+    append(L1, L2, L),
+    append(L, L3, Pieces).
 
 % Returns a shuffled list from a list of pieces
+
 shuffle_board(Shuffled) :-
     pieces(9, 18, 9, Pieces),
     random_permutation(Pieces, Shuffled).
 
-% Generates random game board, filling it with pieces from list
+% Fills a row with pieces
+
+fill_row(Pieces, Collumns, FilledRow) :-
+    take(Pieces, Collumns, Row),
+    create(Row, FilledRow).
+
+% Fills board row by row using a list of pieces
+
+fill_board(_, _, 0, _).
+
+fill_board(Pieces, Collumns, Rows, Board) :-
+    fill_row(Pieces, Collumns, FilledRow),
+    remove_n(Pieces, Collumns, P),
+    append(FilledBoard, [FilledRow], Board),
+    R is Rows - 1,
+    fill_board(P, Collumns, R, FilledBoard).
+
+% Generates random game board, filling it with pieces
+
 generate_board :-
-    now(T), % Seed for RNG
-    setrand(T), % For randomness 
-    shuffle_board(Shuffled), % Shuffles all pieces from the list
-    fill_board(Shuffled, Board), % Fills board with the pieces from list
+    now(T),                             % Seed for RNG
+    setrand(T),                         % For randomness 
+    shuffle_board(Shuffled),            % Shuffles all pieces from the list
+    fill_board(Shuffled, 6, 6, Board),  % Fills board with the pieces from list
     assert(initial(Board)).
