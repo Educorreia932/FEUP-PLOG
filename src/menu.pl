@@ -1,4 +1,4 @@
-
+% Start Menu
 main_menu:-
     nl,
     print('================================================'), nl,
@@ -8,26 +8,8 @@ main_menu:-
     print('================================================'), nl.
 
 process_main_menu_input(2). 
+
 process_main_menu_input(1) :- 
-    game_menu,
-    read(Input),
-    process_game_menu_input(Input),
-    Input =:= 5.
-
-game_menu:-
-    nl,
-    print('================================================'), nl,
-    print('Please choose one of the following options: '), nl,
-    print('1 - Player vs PC '), nl,
-    print('2 - Player vs Player'), nl,
-    print('3 - PC vs PC'), nl,
-    print('4 - Instructions'), nl,
-    print('5 - Go Back'), nl,
-    print('================================================'), nl.
-
-process_game_menu_input(5) :- !.
-process_game_menu_input(4) :- instructions, !.
-process_game_menu_input(N) :- 
     table_menu,
     read(Input),
     process_table_menu_input(Input),
@@ -47,18 +29,40 @@ process_table_menu_input(4) :- !.
 
 process_table_menu_input(1) :- 
     generate_board(6, 6),               % Generates a board
-    initial(GameState),                 % Unifies GameState
-    display_game(GameState, _), !.      % Displays the GameState
+    initial(GameState), 
+    choose_game(GameState).                % Unifies GameState
 
 process_table_menu_input(2) :- 
     generate_board(6, 9),               % Generates a board
     initial(GameState),                 % Unifies GameState
-    display_game(GameState, _), !.      % Displays the GameState
+    choose_game(GameState).
 
 process_table_menu_input(3) :- 
     generate_board(9, 9),               % Generates a board
     initial(GameState),                 % Unifies GameState
-    display_game(GameState, _), !.      % Displays the GameState
+    choose_game(GameState).                 
+
+% Game Menu
+
+choose_game(GameState) :-
+    game_menu,
+    read(Input),
+    process_game_menu_input(Input, GameState).
+
+game_menu:-
+    nl,
+    print('================================================'), nl,
+    print('Please choose one of the following options: '), nl,
+    print('1 - Player vs Player '), nl,
+    print('2 - Player vs PC'), nl,
+    print('3 - PC vs PC'), nl,
+    print('4 - Instructions'), nl,
+    print('5 - Go Back'), nl,
+    print('================================================'), nl.
+
+process_game_menu_input(1, GameState) :- game(player, player, GameState).
+process_game_menu_input(4, GameState) :- instructions.
+% process_game_menu_input(5, GameState).
 
 % Prints instructions of game
 instructions :-
@@ -67,10 +71,25 @@ instructions :-
     print('GREENER RULES'), nl,
     print('---------------------------------------------------------------------------------------------------------------------------------------------'), nl,
     print('Players take turns (starting by Black) capturing pyramids or stacks of any colour on the same row or collumn and with no stacks between them.'), nl,
-    print('On your turn you must make one capture if possible, otherwise you pass the turn.'), nl,
+    print('On your turn you must make one capture if possiwble, otherwise you pass the turn.'), nl,
     print('The game ends when all players pass in succession.'), nl,
     print('The player with the most green  pyramids captured (being part of stacks they control) wins the game.'), nl,
     print('In case of a tie, the player with the highest stack wins. If the tie persists, play again.'), nl,
     print('=============================================================================================================================================='), nl.
 
+% Choose AI Strategy
 
+strategy_menu :-
+    nl,
+    print('============================================================================================================================================='), nl,
+    print('Please choose a strategy for the AI :'), nl,
+    print('1 - Random'), nl,
+    print('2 - Smart'), nl,
+    print('============================================================================================================================================='), nl.
+
+choose_strategy :-
+    strategy_menu,
+    read(Input),
+    process_strategy_input(Input).
+
+    

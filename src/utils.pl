@@ -1,3 +1,15 @@
+% Count the number of elements equal to N inside a list
+
+count([], _C, 0).
+
+count([C|T], C, N) :- 
+    count(T, C, N1), 
+    N is N1 + 1.            % Increment N because it is what we are looking for
+
+count([X|T], C, N) :- 
+    X \= C,                 % Different from what we are looking for, no need to increment N
+    count(T, C, N).
+
 % Converts a list into a list of lists
 
 create([], []).

@@ -1,14 +1,7 @@
-% Count the number of elements equal to N inside a list
+:- consult('utils.pl').
 
-count([], _C, 0).
-
-count([C|T], C, N) :- 
-    count(T, C, N1), 
-    N is N1 + 1. % Increment N because it is what we are looking for
-
-count([X|T], C, N) :- 
-    X \= C, % Different from what we are looking for, no need to increment N
-    count(T, C, N).
+player(w, 'White').
+player(b, 'Black').
 
 % Assigns each piece to a character for displaying
 
@@ -152,10 +145,10 @@ display_board_middle([H|[]], _ID) :-
     display_row(H, _ID), nl. % Last row
 
 display_board_middle([H|T], ID) :-
-    display_row(H, ID), nl, % Displays a row
-    display_line(H), nl, % Displays line between rows
+    display_row(H, ID), nl,          % Displays a row
+    display_line(H), nl,             % Displays line between rows
     ID1 is ID + 1,
-    display_board_middle(T, ID1). % Recursion
+    display_board_middle(T, ID1).    % Recursion
 
 % Displays the board of the game
 
@@ -168,5 +161,7 @@ display_board([H|T]) :-
     display_bottom(H).                 % Displays the bottom of the board
 
 % Displays the game at a certain state
-display_game(_GameState, _Player) :-
-    display_board(_GameState).  % Displays the board of the game
+display_game(GameState, Player) :-
+    display_board(GameState), nl,
+    player(Player, P),
+    format('~w is now playing.', [P]).  % Displays the board of the game
