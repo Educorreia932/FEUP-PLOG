@@ -1,3 +1,15 @@
+read_input(Input) :-
+    get_code(Character),
+    read_input_all(Character, Characters),       
+    name(Input, Characters).
+
+read_input_all(10, []).
+read_input_all(13, []).
+
+read_input_all(Character, [Character|T]) :-
+    get_code(C),
+    read_input_all(C, T).
+
 % Start Menu
 main_menu:-
     nl,
@@ -11,7 +23,7 @@ process_main_menu_input(2).
 
 process_main_menu_input(1) :- 
     table_menu,
-    read(Input),
+    read_input(Input),
     process_table_menu_input(Input),
     Input =:= 4.
 
@@ -46,7 +58,7 @@ process_table_menu_input(3) :-
 
 choose_game(GameState) :-
     game_menu,
-    read(Input),
+    read_input(Input),
     process_game_menu_input(Input, GameState).
 
 game_menu:-
@@ -89,7 +101,6 @@ strategy_menu :-
 
 choose_strategy :-
     strategy_menu,
-    read(Input),
+    read_input(Input),
     process_strategy_input(Input).
 
-    

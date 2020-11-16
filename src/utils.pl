@@ -28,3 +28,9 @@ take(L, N, L1) :-
 remove_n(List, N, ShorterList) :-
     length(Prefix, N),
     append(Prefix, ShorterList, List).
+
+% Checks if a list is empty 
+
+is_empty(List) :-
+    length(List, Length),
+    Length =:= 0.

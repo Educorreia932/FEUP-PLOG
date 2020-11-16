@@ -161,6 +161,7 @@ display_board([H|T]) :-
     display_bottom(H).                 % Displays the bottom of the board
 
 % Displays the game at a certain state
+
 display_game(GameState, Player) :-
     display_board(GameState), nl,
     player(Player, P),
