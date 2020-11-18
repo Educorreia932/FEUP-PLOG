@@ -69,9 +69,24 @@ game_menu:-
     print('5 - Go Back'), nl,
     print('================================================'), nl.
 
-process_game_menu_input(1, GameState) :- game(player, player, GameState).
-process_game_menu_input(4, GameState) :- instructions.
+process_game_menu_input(1, GameState) :- game(b, GameState).
+
+process_game_menu_input(4, _GameState) :- instructions.
 % process_game_menu_input(5, GameState).
+
+game_move(Player, GameState, NewGameState) :-
+    nl,
+    print('What\'s your move?'), nl,
+    read_input(I0),
+    read_input(J0),
+    read_input(I1),
+    read_input(J1),
+    process_game_move_input(Player, GameState, I0, J0, I1, J1, NewGameState),
+    nl.
+
+process_game_move_input(Player, BoardIn, I0, J0, I1, J1, BoardOut) :- 
+    % TODO: Verify if is valid move
+    move(BoardIn, I0, J0, I1, J1, BoardOut).
 
 % Prints instructions of game
 instructions :-

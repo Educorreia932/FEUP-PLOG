@@ -15,20 +15,18 @@ play :-
         process_main_menu_input(Input),
         Input =:= 2.
 
-% move(GameState, Move, NewGameState) :-
+% move(GameState, Move, NewGameState) :- TODO:
 
-game(player, player, GameState) :-  
-    display_game(GameState, b), !.
-
-% TODO: Only for debug purposes
-game :-
-    generate_board(6, 6), 
-    initial(GameState), 
-    display_game(GameState, b).
+game(Player, GameState) :-  
+    display_game(GameState, Player),
+    game_move(Player, GameState, NewGameState),
+    clear_screen,
+    next_player(Player, NextPlayer),
+    game(NextPlayer, NewGameState).
 
 % game(player, pc, strategy, GameState) :-
 % game(pc, pc, strat1, strat2, GameState) :-
 
-game_over(GameState, Winner).
-value(GameState, Player, Value).
-choose_move(GameState, Player, Level, Move).
+% game_over(GameState, Winner).
+% value(GameState, Player, Value).
+% choose_move(GameState, Player, Level, Move).

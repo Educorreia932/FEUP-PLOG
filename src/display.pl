@@ -166,3 +166,8 @@ display_game(GameState, Player) :-
     display_board(GameState), nl,
     player(Player, P),
     format('~w is now playing.', [P]).  % Displays the board of the game
+
+% Clears the screen
+
+clear_screen :-
+    write('\e[H\e[2J').
