@@ -59,4 +59,4 @@ valid_move(Player, BoardIn, BoardOut) :-
     \+ is_same_cell(I0, J0, I1, J1),                      % Start and cell coordinates are different
     (I0 == I1; J0 == J1),
     \+ has_pieces_between(BoardIn, I0, J0, I1, J1),
-    move(BoardIn, I0, J0, I1, J1, BoardOut). 
+    move(BoardIn, [I0, J0, I1, J1], BoardOut). 

@@ -77,19 +77,29 @@ process_game_menu_input(4, _GameState) :- instructions.
 choose_move(Player, GameState, NewGameState) :-
     nl,
     print('What\'s your move?'), nl,
-    read_input(I0),
-    read_input(J0),
-    read_input(I1),
-    read_input(J1),
-    print(':Cccc'),
+    choose_cell(I0, J0),
+    choose_cell(I1, J1),
     process_choose_move_input(Player, GameState, [I0, J0, I1, J1], NewGameState),
     nl.
 
+choose_cell(Row, Column) :-
+    read_input(J),
+    read_input(I),
+    column_index(J, Column),
+    Row is I - 1.
+
+% Converts a column's letter to an index
+
+column_index(ColumnIn, ColumnOut) :-
+    char_code(ColumnIn, Code),
+    ColumnOut is Code - 65.
+
 process_choose_move_input(Player, GameState, [I0, J0, I1, J1], NewGameState) :- 
-    % TODO: Verify if is valid move
-    move(GameState, [I0, J0, I1, J1], NewGameState).
+    move(GameState, [I0, J0, I1, J1], NewGameState),
+    valid_move(Player, GameState, NewGameState).
 
 % Prints instructions of game
+
 instructions :-
     nl,
     print('============================================================================================================================================='), nl,
