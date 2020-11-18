@@ -40,18 +40,15 @@ table_menu:-
 process_table_menu_input(4) :- !.
 
 process_table_menu_input(1) :- 
-    generate_board(6, 6),               % Generates a board
-    initial(GameState), 
+    generate_board(6, 6, GameState),       % Generates a board
     choose_game(GameState).                % Unifies GameState
 
 process_table_menu_input(2) :- 
-    generate_board(6, 9),               % Generates a board
-    initial(GameState),                 % Unifies GameState
+    generate_board(6, 9, GameState),       % Generates a board
     choose_game(GameState).
 
 process_table_menu_input(3) :- 
-    generate_board(9, 9),               % Generates a board
-    initial(GameState),                 % Unifies GameState
+    generate_board(9, 9, GameState),       % Generates a board
     choose_game(GameState).                 
 
 % Game Menu

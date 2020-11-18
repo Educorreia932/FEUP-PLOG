@@ -1,7 +1,7 @@
 :- consult('board.pl').
 :- consult('display.pl').
 :- consult('menu.pl').
-:- consult('moves.pl')
+:- consult('moves.pl').
 
 % Defines what color is playing next
 next_player(w, b).

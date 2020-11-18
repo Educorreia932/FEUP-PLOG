@@ -4,9 +4,17 @@
 :- use_module(library(system)).
 :- use_module(library(lists)).
 
-% Initial Configuration of Board
+% Checks if two pair of coordinates correspond to the same cell
 
-:- dynamic(initial/1).
+is_same_cell(I0, J0, I1, J1) :-
+    I0 =:= I1,
+    J0 =:= J1.
+
+% Returns the stack present int the cell with coordinates I, J from the board
+
+get_cell(Board, I, J, Stack) :-
+    nth0(I, Board, Row),        % Select row
+    nth0(J, Row, Stack).        % Select stack from row
 
 % List of all pieces
 
@@ -46,10 +54,8 @@ fill_board(Pieces, Collumns, Rows, Board) :-
 
 % Generates random game board, filling it with pieces
 
-generate_board(Collumns, Rows) :-
+generate_board(Collumns, Rows, Board) :-
     now(T),                                             % Seed for RNG
     setrand(T),                                         % For randomness 
     shuffle_board(Shuffled, Collumns, Rows),            % Shuffles all pieces from the list
-    fill_board(Shuffled, Collumns, Rows, Board),        % Fills board with the pieces from list
-    assert(initial(Board)).
-
+    fill_board(Shuffled, Collumns, Rows, Board).       % Fills board with the pieces from list

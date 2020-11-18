@@ -145,10 +145,10 @@ display_board_middle([H|[]], _ID) :-
     display_row(H, _ID), nl. % Last row
 
 display_board_middle([H|T], ID) :-
-    display_row(H, ID), nl,          % Displays a row
-    display_line(H), nl,             % Displays line between rows
+    display_row(H, ID), nl,            % Displays a row
+    display_line(H), nl,               % Displays line between rows
     ID1 is ID + 1,
-    display_board_middle(T, ID1).    % Recursion
+    display_board_middle(T, ID1).      % Recursion
 
 % Displays the board of the game
 
