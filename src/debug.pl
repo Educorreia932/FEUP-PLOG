@@ -1,18 +1,15 @@
 :- use_module(library(lists)).
+:- use_module(library(between)).
 :- consult('utils.pl').
 
 initial([
-    [[b], [w], [g], [g], [g], [g]],
-    [[g], [w], [b,g,g], [g], [b], [w]],
-    [[w], [g], [], [g], [w], [g]],
-    [[g], [g], [w], [b], [g], [b]], 
-    [[g], [g], [w], [b], [g], [w]],
-    [[w], [b], [g], [g], [b], [g]]
+    [[b], [w]],
+    [[g], [w]]
 ]).
 
 % Move piece from a cell to other
 
-move(BoardIn, [I0, J0], [I1, J1], BoardOut) :-
+move(BoardIn, I0, J0, I1, J1, BoardOut) :-
     nth0(I0, BoardIn, RowStart),             % Select starting row
     nth0(J0, RowStart, StackStart),          % Select stack from row
 
@@ -24,46 +21,58 @@ move(BoardIn, [I0, J0], [I1, J1], BoardOut) :-
     append(StackStart, StackEnd, Stack),     % Add the piece to the top of the stack
     
     replace(RowEnd, J1, Stack, Row),         % Move stack to final cell
-    replace(BoardAux, I1, Row, BoardOut).
+    replace(BoardAux, I1, Row, BoardOut), !.
+
+% Returns the stack present int the cell with coordinates I, J from the board
+
+get_cell(Board, I, J, Stack) :-
+    nth0(I, Board, Row),        % Select row
+    nth0(J, Row, Stack).        % Select stack from row
+
+% Returns the board's width and height
+
+board_dimensions(Board, Width, Height) :- 
+    length(Board, Height),
+    nth0(0, Board, Row),      
+    length(Row, Width).
+
+% Checks if there are any pieces in the same line between two cells
+
+has_pieces_between(Board, I, J0, I, J1) :-    % Same row
+    exclusive_between(J0, J1, J),
+    get_cell(Board, I, J, Stack),
+    \+ is_empty(Stack).
+
+has_pieces_between(Board, I0, J, I1, J) :-    % Same column
+    exclusive_between(I0, I1, I),
+    get_cell(Board, I, J, Stack),
+    \+ is_empty(Stack).
 
 % All possible and valid moves
 
 valid_moves(BoardIn, Player, ListOfMoves) :-
-    findall(BoardOut, valid_move(Player, BoardIn, _Coords, BoardOut), ListOfMoves).
+    findall(BoardOut, valid_move(Player, BoardIn, BoardOut), ListOfMoves).
 
-valid_move(Player, BoardIn, [I, J], BoardOut) :-
-    nth1(I, BoardIn, Row),      % Select row
-    nth1(J, Row, Stack),        % Select stack from row
-    \+ is_empty(Stack),         % Stack is not empty
-    nth0(0, Stack, Player),     % Piece is controlled by player
-    I1 is I - 1,
-%    I2 is I + 1,
-%    J1 is J - 1,
-%    J2 is J + 1,
-    valid_move_up(BoardIn, [I, J], [I1, J], BoardOut)
-%    valid_move_down(BoardIn, [I0, J0], [I4, J0], BoardOut);
-%   valid_move_left(BoardIn, [I0, J0], [I0, J3], BoardOut);
-%    valid_move_right(BoardIn, [I0, J0], [I0, J4], BoardOut)
-    . 
+valid_move(Player, BoardIn, BoardOut) :-
+    board_dimensions(BoardIn, Width, Height),
 
-valid_move_up(_, _, [I1, _], []) :-
-    I1 =< 0, !.
+    exclusive_between(-1, Height, I0),                    % Generate start cell coordinates
+    exclusive_between(-1, Width, J0),
+    get_cell(BoardIn, I0, J0, StackStart),                % Get start cell
+    nth0(0, StackStart, Player),                          % Piece is controlled by player
 
-valid_move_up(BoardIn, [I0, J0], [I1, J1], BoardOut) :-
-    nth1(I1, BoardIn, Row),                               % Select row
-    nth1(J1, Row, Stack),                                 % Select stack from row
-    \+ is_empty(Stack),                                   % Stack is not empty.
-    move(BoardIn, [I0, J0], [I1, J1], BoardOut),          % Move piece
-    !.       
+    exclusive_between(-1, Height, I1),                    % Generate end cell coordinates
+    exclusive_between(-1, Width, J1),
+    get_cell(BoardIn, I1, J1, StackEnd),                  % Get end cell
+    \+ is_empty(StackEnd),                                % Cell is not empty
+    \+ is_same_cell(I0, J0, I1, J1),                      % Start and cell coordinates are different
+    (I0 == I1; J0 == J1),
 
-valid_move_up(BoardIn, [I0, J0], [I1, J1], BoardOut) :-
-    I2 is I1 - 1,                                                  % Go up by a row
-    valid_piece_move_up(BoardIn, [I0, J0], [I2, J1], BoardOut).
+    \+ has_pieces_between(BoardIn, I0, J0, I1, J1),
+    move(BoardIn, I0, J0, I1, J1, BoardOut). 
 
-% initial(B), valid_moves(b, B, L).
+% Checks if two pair of coordinates correspond to the same cell
 
-
-
-
-
-
+is_same_cell(I0, J0, I1, J1) :-
+    I0 =:= I1,
+    J0 =:= J1.

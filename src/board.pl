@@ -8,12 +8,6 @@
 
 :- dynamic(initial/1).
 
-build(_, 0, _).         % End of recursion
-
-build(X, N, [X|T]) :-   % Adds N pieces to list
-    N1 is N - 1,
-    build(X, N1, T).    % Recursion
-
 % List of all pieces
 
 pieces(W, G, B, Pieces) :-
@@ -58,3 +52,4 @@ generate_board(Collumns, Rows) :-
     shuffle_board(Shuffled, Collumns, Rows),            % Shuffles all pieces from the list
     fill_board(Shuffled, Collumns, Rows, Board),        % Fills board with the pieces from list
     assert(initial(Board)).
+

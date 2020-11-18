@@ -10,6 +10,14 @@ count([X|T], C, N) :-
     X \= C,                 % Different from what we are looking for, no need to increment N
     count(T, C, N).
 
+% Builds a list with N elements and value X
+
+build(_, 0, _).         % End of recursion
+
+build(X, N, [X|T]) :-   % Adds N pieces to list
+    N1 is N - 1,
+    build(X, N1, T).    % Recursion
+
 % Converts a list into a list of lists
 
 create([], []).
@@ -44,3 +52,10 @@ replace([H|T], I, X, [H|R]) :-
     replace(T, NI, X, R), !.
     
 replace(L, _, _, L).
+
+exclusive_between(Low, High, Value) :-
+    L is Low + 1,
+    H is High - 1,
+    between(L, H, Value).
+
+
