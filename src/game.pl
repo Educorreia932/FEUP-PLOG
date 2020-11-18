@@ -8,6 +8,7 @@ next_player(w, b).
 next_player(b, w).
 
 % Starts game
+
 play :-
     % repeat,
         main_menu,
@@ -15,11 +16,9 @@ play :-
         process_main_menu_input(Input),
         Input =:= 2.
 
-% move(GameState, Move, NewGameState) :- TODO:
-
 game(Player, GameState) :-  
     display_game(GameState, Player),
-    game_move(Player, GameState, NewGameState),
+    choose_move(Player, GameState, NewGameState),
     clear_screen,
     next_player(Player, NextPlayer),
     game(NextPlayer, NewGameState).
