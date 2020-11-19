@@ -1,9 +1,12 @@
+:- use_module(library(random)).
+
 :- consult('board.pl').
 :- consult('display.pl').
 :- consult('menu.pl').
 :- consult('moves.pl').
 
 % Defines what color is playing next
+
 next_player(w, b).
 next_player(b, w).
 
@@ -16,12 +19,31 @@ play :-
         process_main_menu_input(Input),
         Input =:= 2.
 
-game(Player, GameState) :-  
+% Player VS Player
+
+game_loop(Player, GameState, 1) :-
     display_game(GameState, Player),
-    choose_move(Player, GameState, NewGameState),
+    choose_move_input(Player, GameState, NewGameState),
     clear_screen,
     next_player(Player, NextPlayer),
-    game(NextPlayer, NewGameState).
+    game_loop(NextPlayer, NewGameState, 1).
+
+% AI with random difficulty level
+
+game_loop(Player, GameState, 2) :-
+    display_game(GameState, Player),
+    choose_move(GameState, Player, 2, NewGameState),
+    clear_screen,
+    next_player(Player, NextPlayer),
+    game_loop(NextPlayer, NewGameState, 2).
+
+% Random difficulty level
+
+choose_move(GameState, Player, 2, Move) :-
+    valid_moves(GameState, Player, ListOfMoves),
+    length(ListOfMoves, NumberOfMoves),
+    random(0, NumberOfMoves, R),
+    nth0(R, ListOfMoves, Move).
 
 % game(player, pc, strategy, GameState) :-
 % game(pc, pc, strat1, strat2, GameState) :-

@@ -16,6 +16,12 @@ get_cell(Board, I, J, Stack) :-
     nth0(I, Board, Row),        % Select row
     nth0(J, Row, Stack).        % Select stack from row
 
+% Converts a column's letter to an index
+
+column_index(ColumnIn, ColumnOut) :-
+    char_code(ColumnIn, Code),
+    ColumnOut is Code - 65.
+
 % List of all pieces
 
 pieces(W, G, B, Pieces) :-

@@ -53,9 +53,9 @@ replace([H|T], I, X, [H|R]) :-
     
 replace(L, _, _, L).
 
+% Verifies if a number is between two others excluding them
+
 exclusive_between(Low, High, Value) :-
     L is Low + 1,
     H is High - 1,
     between(L, H, Value).
-
-
