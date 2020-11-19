@@ -1,3 +1,4 @@
+:- use_module(library(lists)).
 :- use_module(library(random)).
 
 :- consult('board.pl').
@@ -30,14 +31,27 @@ game_loop(Player, GameState, 1) :-
 
 % AI with random difficulty level
 
-game_loop(Player, GameState, 2) :-
+game_loop(_, GameState, _, 1, 1) :-
+    game_over(GameState, Winner),
+    format('The winner is ~w', Winner), !.
+
+game_loop(Player, GameState, 2, _, _) :-
     display_game(GameState, Player),
     choose_move(GameState, Player, 2, NewGameState),
+    (GameState == NewGameState -> 
+        (Player == b -> BlackFinished is 1;
+         Player == w -> WhiteFinished is 1);
+     BlackFinished is 0, WhiteFinished is 0
+    ),
+    % sleep(0.5),
     clear_screen,
     next_player(Player, NextPlayer),
-    game_loop(NextPlayer, NewGameState, 2).
+    game_loop(NextPlayer, NewGameState, 2, BlackFinished, WhiteFinished).
 
 % Random difficulty level
+
+choose_move(GameState, Player, _, GameState) :-
+    valid_moves(GameState, Player, []).
 
 choose_move(GameState, Player, 2, Move) :-
     valid_moves(GameState, Player, ListOfMoves),
@@ -45,9 +59,34 @@ choose_move(GameState, Player, 2, Move) :-
     random(0, NumberOfMoves, R),
     nth0(R, ListOfMoves, Move).
 
-% game(player, pc, strategy, GameState) :-
-% game(pc, pc, strat1, strat2, GameState) :-
+game_over(GameState, Winner) :-
+    value(GameState, b, BlackValue),
+    value(GameState, w, WhiteValue),
+    (BlackValue > WhiteValue -> Winner = 'Black';
+    Winner = 'White').
 
-% game_over(GameState, Winner).
-% value(GameState, Player, Value).
-% choose_move(GameState, Player, Level, Move).
+% Calculate value 
+
+value(GameState, Player, Value) :-
+    flatten(GameState, Stacks),                     % Retrieve list of all stacks
+    player_stacks(Stacks, Player, PlayerStacks),    % Retrieve player's stacks
+    green_pieces(PlayerStacks, GreenPieces),        % Count the number of green pieces in each stack
+    sum(GreenPieces, Value).                        % Get the total number of green pieces
+
+% Retrieve stacks controlled by player
+
+player_stacks(Stacks, Player, PlayerStacks) :- 
+    findall(Stack, player_controls(Stacks, Stack, Player), PlayerStacks).
+
+player_controls(Stacks, Stack, Player) :-
+    member(Stack, Stacks),
+    nth0(0, Stack, Player).
+
+% Count the number of green pieces in each stack and map it
+
+green_pieces([], []).
+
+green_pieces([C|R], [TC|CR]) :-
+    count(C, g, TC),
+    green_pieces(R, CR).
+

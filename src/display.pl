@@ -24,41 +24,41 @@ display_stack(H) :-
     put_code_n(CharCode, 7).
 
 display_stack(H) :-
-    character(H, CharCode), % Assigns character to piece on top
-    count(H, 'g', GreenPieces), % Count the number of green pieces in the stack
-    (GreenPieces < 10 -> put_code(32); true), % Adds one space if necessary
-    put_code(32), % Space
-    print(GreenPieces), % Prints number of green pieces
-    color(H, Color), % Assigns color to piece
+    character(H, CharCode),                             % Assigns character to piece on top
+    count(H, 'g', GreenPieces),                         % Count the number of green pieces in the stack
+    (GreenPieces < 10 -> put_code(32); true),           % Adds one space if necessary
+    put_code(32),                                       % Space
+    print(GreenPieces),                                 % Prints number of green pieces
+    color(H, Color),                                    % Assigns color to piece
     put_code(27), 
-    print(Color), % Apply color to piece
+    print(Color),                                       % Apply color to piece
     put_code(CharCode),
     put_code(27),
-    print('[0m'), % Reset color
-    length(H, N), % Calculates height of stack
-    print(N), % Prints height of stack
-    (N < 10 -> put_code(32); true), % Adds space if necessary
-    put_code(32). % Space
+    print('[0m'),                                       % Reset color
+    length(H, N),                                       % Calculates height of stack
+    print(N),                                           % Prints height of stack
+    (N < 10 -> put_code(32); true),                     % Adds space if necessary
+    put_code(32).                                       % Space
 
 % Displays collumns ids (A, B, C...)
 
 display_collumn_id([], _ID). % Finish recursion
 
 display_collumn_id([_H|T], ID) :-
-    put_code_n(32, 4), % 4 Spaces
-    put_code(ID), % Displays ID (A, B, C...)
-    put_code_n(32, 3), % 3 Spaces
+    put_code_n(32, 4),                 % 4 Spaces
+    put_code(ID),                      % Displays ID (A, B, C...)
+    put_code_n(32, 3),                 % 3 Spaces
     ID1 is ID + 1, 
-    display_collumn_id(T, ID1). % Recursion
+    display_collumn_id(T, ID1).        % Recursion
 
 % Prints a code N times
 
 put_code_n(_C, 0). % Finish Recursion
 
 put_code_n(C, N) :- 
-    put_code(C), % Print code
+    put_code(C),          % Print code
     N1 is N - 1,
-    put_code_n(C, N1). % Recursion
+    put_code_n(C, N1).    % Recursion
 
 % Displays middle of top (─┬─)
 

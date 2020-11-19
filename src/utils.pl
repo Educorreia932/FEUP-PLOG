@@ -59,3 +59,24 @@ exclusive_between(Low, High, Value) :-
     L is Low + 1,
     H is High - 1,
     between(L, H, Value).
+
+% Sum all the elements of a list
+
+sum([], 0).
+
+sum([H|T], Sum) :-
+   sum(T, Rest),
+   Sum is H + Rest.
+
+% Flattens a list by one-level
+
+flatten([], []).
+
+flatten([A|B],L) :- 
+    is_list(A),
+    flatten(B,B1), 
+    !,
+    append(A,B1,L).
+
+flatten([A|B], [A|B1]) :- 
+    flatten(B, B1).

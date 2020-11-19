@@ -28,10 +28,10 @@ process_main_menu_input(1) :-
     table_menu,
     read_input(Input),
     process_table_menu_input(Input),
-    Input =:= 4.
+    Input =:= 4, !.
 
-process_main_menu_input(2) :- instructions. 
-process_main_menu_input(3). 
+process_main_menu_input(2) :- instructions, !. 
+process_main_menu_input(3), !. 
 
 table_menu:-
     nl,
@@ -50,15 +50,15 @@ process_table_menu_input(4) :- !.
 
 process_table_menu_input(1) :- 
     generate_board(6, 6, GameState),       % Generates a board
-    choose_game(GameState).                % Unifies GameState
+    choose_game(GameState), !.                % Unifies GameState
 
 process_table_menu_input(2) :- 
     generate_board(6, 9, GameState),       % Generates a board
-    choose_game(GameState).
+    choose_game(GameState), !.
 
 process_table_menu_input(3) :- 
     generate_board(9, 9, GameState),       % Generates a board
-    choose_game(GameState).                 
+    choose_game(GameState), !.                 
 
 % Game Menu
 
@@ -80,9 +80,11 @@ game_menu:-
     print('                                                '), nl,
     print('================================================'), nl.
 
-process_game_menu_input(1, GameState) :- game_loop(b, GameState, 1).
+process_game_menu_input(1, GameState) :- 
+    game_loop(b, GameState, 1, 0, 0), !.
 
-process_game_menu_input(3, GameState) :- game_loop(b, GameState, 2).
+process_game_menu_input(3, GameState) :- 
+    game_loop(b, GameState, 2, 0, 0), !.
 
 % Ask play to choose a cell
 
@@ -123,7 +125,7 @@ instructions :-
     print('                                                                '), nl,
     print('   The game ends when all players pass in succession.           '), nl,
     print('                                                                '), nl,
-    print('   The player with the most green  pyramids captured (being     '), nl,
+    print('   The player with the most green pyramids captured (being      '), nl,
     print('  part of stacks they control) wins the game.                   '), nl,
     print('   In case of a tie, the player with the highest stack wins.    '), nl,
     print('   If the tie persists, play again.                             '), nl,

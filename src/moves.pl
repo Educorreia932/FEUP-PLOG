@@ -38,6 +38,7 @@ has_pieces_between(Board, I0, J, I1, J) :-    % Same column
     get_cell(Board, I, J, Stack),
     \+ is_empty(Stack).
 
+
 % All possible and valid moves
 
 valid_moves(BoardIn, Player, ListOfMoves) :-
