@@ -14,15 +14,23 @@ next_player(b, w).
 % Starts game
 
 play :-
+    now(T),                                             % Seed for RNG
+    setrand(T),                                         % For randomness 
     % repeat,
         main_menu,
         read_input(Input),
         process_main_menu_input(Input),
         Input =:= 2.
 
+% End of game loop
+
+game_loop(_, GameState, 1, 1, _) :-
+    game_over(GameState, Winner),
+    format('The winner is ~w', Winner), !.
+
 % Player VS Player
 
-game_loop(Player, GameState, 1) :-
+game_loop(Player, GameState, _, _, [1]) :-
     display_game(GameState, Player),
     choose_move_input(Player, GameState, NewGameState),
     clear_screen,
@@ -31,29 +39,25 @@ game_loop(Player, GameState, 1) :-
 
 % AI with random difficulty level
 
-game_loop(_, GameState, _, 1, 1) :-
-    game_over(GameState, Winner),
-    format('The winner is ~w', Winner), !.
-
-game_loop(Player, GameState, 2, _, _) :-
+game_loop(Player, GameState, _, _, [3, 1]) :-
     display_game(GameState, Player),
-    choose_move(GameState, Player, 2, NewGameState),
+    choose_move(GameState, Player, 1, NewGameState),
     (GameState == NewGameState -> 
         (Player == b -> BlackFinished is 1;
          Player == w -> WhiteFinished is 1);
      BlackFinished is 0, WhiteFinished is 0
     ),
-    % sleep(0.5),
+    sleep(0.5),
     clear_screen,
     next_player(Player, NextPlayer),
-    game_loop(NextPlayer, NewGameState, 2, BlackFinished, WhiteFinished).
+    game_loop(NextPlayer, NewGameState, BlackFinished, WhiteFinished, [3, 1]).
 
 % Random difficulty level
 
 choose_move(GameState, Player, _, GameState) :-
     valid_moves(GameState, Player, []).
 
-choose_move(GameState, Player, 2, Move) :-
+choose_move(GameState, Player, 1, Move) :-
     valid_moves(GameState, Player, ListOfMoves),
     length(ListOfMoves, NumberOfMoves),
     random(0, NumberOfMoves, R),

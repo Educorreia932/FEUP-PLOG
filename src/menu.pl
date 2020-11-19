@@ -31,7 +31,7 @@ process_main_menu_input(1) :-
     Input =:= 4, !.
 
 process_main_menu_input(2) :- instructions, !. 
-process_main_menu_input(3), !. 
+process_main_menu_input(3) :- !. 
 
 table_menu:-
     nl,
@@ -81,10 +81,35 @@ game_menu:-
     print('================================================'), nl.
 
 process_game_menu_input(1, GameState) :- 
-    game_loop(b, GameState, 1, 0, 0), !.
+    game_loop(b, GameState, 1, 0, 0, [1]), !.
 
 process_game_menu_input(3, GameState) :- 
-    game_loop(b, GameState, 2, 0, 0), !.
+    choose_strategy(GameState, 3).
+
+% Choose AI Strategy
+
+strategy_menu :-
+    nl,
+    print('================================================'), nl,
+    print('|                  AI STRATEGY                 |'), nl,
+    print('================================================'), nl,
+    print('                                                '), nl,
+    print('                  1 - Random                    '), nl,
+    print('                  2 - Smart                     '), nl,
+    print('                                                '), nl,
+    print('================================================'), nl.
+
+choose_strategy(GameState, GameMode) :-
+    strategy_menu,
+    read_input(Strategy),
+    process_strategy_input(GameState, GameMode, Strategy).
+
+process_strategy_input(GameState, GameMode, Strategy) :-
+    game_loop(b, GameState, 0, 0, [GameMode, Strategy]), !.
+
+wait_enter :-
+	write('Press <Any Key> to continue.\n'),
+	get_char(_), !.
 
 % Ask play to choose a cell
 
@@ -134,24 +159,3 @@ instructions :-
     print('                                                                '), nl,
     print('================================================================'), nl.
 
-% Choose AI Strategy
-
-strategy_menu :-
-    nl,
-    print('================================================'), nl,
-    print('|                  AI STRATEGY                 |'), nl,
-    print('================================================'), nl,
-    print('                                                '), nl,
-    print('                  1 - Random                    '), nl,
-    print('                  2 - Smart                     '), nl,
-    print('                                                '), nl,
-    print('================================================'), nl.
-
-choose_strategy :-
-    strategy_menu,
-    read_input(Input),
-    process_strategy_input(Input).
-
-wait_enter :-
-	write('Press <Any Key> to continue.\n'),
-	get_char(_), !.
