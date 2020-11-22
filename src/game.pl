@@ -28,7 +28,15 @@ start_game(ai, ai, Strat1, Start2, Rows, Columns) :-    % Starts AI vs AI game
     game_loop(ai, ai, b, GameState, 0, 0).              % Starts game with white playing first
 
 
-% End of game loop
+% Game Over
+
+game_over(GameState, Winner) :-
+    value(GameState, b, BlackValue),                % Calculates value for black 
+    value(GameState, w, WhiteValue),                % Calculates value for white
+    winner(BlackValue, WhiteValue, Winner).
+
+winner(BlackValue, WhiteValue, 'Black') :- BlackValue > WhiteValue.
+winner(BlackValue, WhiteValue, 'White') :- BlackValue < WhiteValue.
 
 game_loop(_, _, _, GameState, 1, 1) :-
     game_over(GameState, Winner),
@@ -54,7 +62,7 @@ game_loop(player, player, Player, GameState, _, _) :-
 
 game_loop(ai, ai, Player, GameState, _, _) :-
     display_game(GameState, Player),
-    choose_move(GameState, Player, 1, NewGameState),
+    choose_move(GameState, Player, NewGameState, randomAI),
     (GameState == NewGameState -> 
         (Player == b -> BlackFinished is 1;
          Player == w -> WhiteFinished is 1);
@@ -63,41 +71,37 @@ game_loop(ai, ai, Player, GameState, _, _) :-
     sleep(0.5),
     clear_screen,
     next_player(Player, NextPlayer),
-    game_loop(NextPlayer, NewGameState, BlackFinished, WhiteFinished, [3, 1]).
+    game_loop(ai, ai, NextPlayer, NewGameState, BlackFinished, WhiteFinished).
 
-% Random difficulty level
+% Choose move
 
-choose_move(GameState, Player, _, GameState) :-
-    valid_moves(GameState, Player, []).
+choose_move(GameState, Player, GameState, _) :-
+    valid_moves(GameState, Player, []).             % There are no valid moves
 
-choose_move(GameState, Player, 1, Move) :-
-    valid_moves(GameState, Player, ListOfMoves),
-    length(ListOfMoves, NumberOfMoves),
-    random(0, NumberOfMoves, R),
-    nth0(R, ListOfMoves, Move).
+choose_move(GameState, Player, Move, randomAI) :-
+    valid_moves(GameState, Player, ListOfMoves),    % Calculates valid moves
+    length(ListOfMoves, NumberOfMoves),             % Gets number of valid moves
+    random(0, NumberOfMoves, R),                    % Choose a random number
+    nth0(R, ListOfMoves, Move).                     % Choose a random move
 
-game_over(GameState, Winner) :-
-    value(GameState, b, BlackValue),
-    value(GameState, w, WhiteValue),
-    (BlackValue > WhiteValue -> Winner = 'Black';
-    Winner = 'White').
+choose_move(GameState, Player, Move, smartAI). % TODO
 
-% Calculate value 
+% Calculate value of move
 
 value(GameState, Player, Value) :-
-    flatten(GameState, Stacks),                     % Retrieve list of all stacks
-    player_stacks(Stacks, Player, PlayerStacks),    % Retrieve player's stacks
+    flatten(GameState, AllStacks),                  % Retrieve list of all stacks
+    get_stacks(AllStacks, Player, PlayerStacks),    % Retrieve player's stacks
     green_pieces(PlayerStacks, GreenPieces),        % Count the number of green pieces in each stack
     sum(GreenPieces, Value).                        % Get the total number of green pieces
 
 % Retrieve stacks controlled by player
 
-player_stacks(Stacks, Player, PlayerStacks) :- 
-    findall(Stack, player_controls(Stacks, Stack, Player), PlayerStacks).
+get_stacks(ListOfStacks, Player, PlayerStacks) :-   % Puts all the stacks controlled by one player in a list
+    findall(Stack, get_player_stack(ListOfStacks, Stack, Player), PlayerStacks).    
 
-player_controls(Stacks, Stack, Player) :-
-    member(Stack, Stacks),
-    nth0(0, Stack, Player).
+get_player_stack(ListOfStacks, Stack, Player) :-
+    member(Stack, ListOfStacks),                    % Get stack from list
+    nth0(0, Stack, Player).                         % Verify if top piece is of the player's color
 
 % Count the number of green pieces in each stack and map it
 
