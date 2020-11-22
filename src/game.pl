@@ -13,14 +13,7 @@ next_player(b, w).
 
 % Starts game
 
-play :-
-    now(T),                                             % Seed for RNG
-    setrand(T),                                         % For randomness 
-    % repeat,
-        main_menu,
-        read_input(Input),
-        process_main_menu_input(Input),
-        Input =:= 2.
+
 
 % End of game loop
 

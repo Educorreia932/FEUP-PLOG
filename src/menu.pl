@@ -1,18 +1,40 @@
 read_input(Input) :-
     get_code(Character),
     read_input_all(Character, Characters),       
-    name(Input, Characters).
+    name(Input, Characters), !.
 
-read_input_all(10, []).
-read_input_all(13, []).
+read_input_all(10, []) :- !.
+read_input_all(13, []) :- !.
 
 read_input_all(Character, [Character|T]) :-
     get_code(C),
-    read_input_all(C, T).
+    read_input_all(C, T), !.
+
+% Start Game
+
+play :-
+    now(T),                         % Seed for RNG
+    setrand(T),                     % For randomness 
+    repeat,                         % Repeat while Exit fails
+        print_start_menu,           % Prints Start Menu
+        read_input(Input),          % Receives user option
+        option_start_menu(Input),   % Process option
+        Input =:= 3.                % Exit Game
 
 % Start Menu
 
-main_menu:-
+option_start_menu(1) :-                  % Start Game
+    print_board_menu,                    % Shows board menu
+    read_input(Input),
+    option_board_menu(Input),
+    Input =:= 4, !.                     % Back
+
+option_start_menu(2) :-                 % Instructions
+    print_instructions, !. 
+    
+option_start_menu(3) :- !.              % Exit                       
+
+print_start_menu:-
     nl,
     print('================================================'), nl,
     print('|                   GREENER                    |'), nl,
@@ -24,16 +46,23 @@ main_menu:-
     print('                                                '), nl,
     print('================================================'), nl.
 
-process_main_menu_input(1) :- 
-    table_menu,
-    read_input(Input),
-    process_table_menu_input(Input),
-    Input =:= 4, !.
+% Board Menu
 
-process_main_menu_input(2) :- instructions, !. 
-process_main_menu_input(3) :- !. 
+option_board_menu(1) :-                    % 6x6
+    generate_board(6, 6, GameState),       % Generates a board 6x6
+    choose_game(GameState), !.             % Unifies GameState
+    
+option_board_menu(2) :- 
+    generate_board(6, 9, GameState),       % Generates a board
+    choose_game(GameState), !.
 
-table_menu:-
+option_board_menu(3) :- 
+    generate_board(9, 9, GameState),       % Generates a board
+    choose_game(GameState), !.                 
+    
+    option_board_menu(4) :- !.
+
+print_board_menu:-
     nl,
     print('================================================'), nl,
     print('|                    BOARD                     |'), nl,
@@ -45,20 +74,6 @@ table_menu:-
     print('                   4 - Back                     '), nl,
     print('                                                '), nl,
     print('================================================'), nl.
-
-process_table_menu_input(4) :- !.
-
-process_table_menu_input(1) :- 
-    generate_board(6, 6, GameState),       % Generates a board
-    choose_game(GameState), !.                % Unifies GameState
-
-process_table_menu_input(2) :- 
-    generate_board(6, 9, GameState),       % Generates a board
-    choose_game(GameState), !.
-
-process_table_menu_input(3) :- 
-    generate_board(9, 9, GameState),       % Generates a board
-    choose_game(GameState), !.                 
 
 % Game Menu
 
@@ -135,7 +150,7 @@ process_choose_move_input(Player, GameState, [I0, J0, I1, J1], NewGameState) :-
 
 % Prints instructions of game
 
-instructions :-
+print_instructions :-
     nl,
     print('================================================================'), nl,
     print('|                           HOW TO PLAY                        |'), nl,
