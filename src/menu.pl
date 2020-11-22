@@ -71,14 +71,14 @@ print_board_menu:-
 game_menu(Rows, Columns) :-
     print_game_menu,
     read_input(Input),
-    option_game_menu(Input),
+    option_game_menu(Input, Rows, Columns),
     Input =:= 4.
 
-option_game_menu(4) :- !. % Back 
-option_game_menu(1) :- start_game(player, player, Rows, Columns), !.
+option_game_menu(4, Rows, Columns) :- !. % Back 
+option_game_menu(1, Rows, Columns) :- start_game(player, player, Rows, Columns), !.
 
-option_game_menu(3, GameState) :- 
-    choose_strategy(GameState, 3), !.
+option_game_menu(3, Rows, Columns) :- 
+    choose_strategy(Rows, Columns, 3), !.
 
 print_game_menu:-
     nl,
