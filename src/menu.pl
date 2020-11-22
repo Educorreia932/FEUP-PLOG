@@ -23,16 +23,9 @@ play :-
 
 % Start Menu
 
-option_start_menu(1) :-                  % Start Game
-    print_board_menu,                    % Shows board menu
-    read_input(Input),
-    option_board_menu(Input),
-    Input =:= 4, !.                     % Back
-
-option_start_menu(2) :-                 % Instructions
-    print_instructions, !. 
-    
-option_start_menu(3) :- !.              % Exit                       
+option_start_menu(3) :- !.                      % Exit                       
+option_start_menu(1) :- board_menu, !.          % Start Game          
+option_start_menu(2) :- print_instructions, !.  % Instructions     
 
 print_start_menu:-
     nl,
@@ -48,20 +41,18 @@ print_start_menu:-
 
 % Board Menu
 
-option_board_menu(1) :-                    % 6x6
-    generate_board(6, 6, GameState),       % Generates a board 6x6
-    choose_game(GameState), !.             % Unifies GameState
-    
-option_board_menu(2) :- 
-    generate_board(6, 9, GameState),       % Generates a board
-    choose_game(GameState), !.
+board_menu :- 
+    print_board_menu,              
+    read_input(Input),
+    option_board_menu(Input),
+    Input =:= 4.
 
-option_board_menu(3) :- 
-    generate_board(9, 9, GameState),       % Generates a board
-    choose_game(GameState), !.                 
+option_board_menu(4) :- !.                  % Back
+option_board_menu(1) :- game_menu(6, 6), !. % 6x6
+option_board_menu(2) :- game_menu(6, 9), !. % 6x9
+option_board_menu(3) :- game_menu(9, 9), !. % 9x9
+            
     
-    option_board_menu(4) :- !.
-
 print_board_menu:-
     nl,
     print('================================================'), nl,
@@ -77,12 +68,19 @@ print_board_menu:-
 
 % Game Menu
 
-choose_game(GameState) :-
-    game_menu,
+game_menu(Rows, Columns) :-
+    print_game_menu,
     read_input(Input),
-    process_game_menu_input(Input, GameState).
+    option_game_menu(Input),
+    Input =:= 4.
 
-game_menu:-
+option_game_menu(4) :- !. % Back 
+option_game_menu(1) :- start_game(player, player, Rows, Columns), !.
+
+option_game_menu(3, GameState) :- 
+    choose_strategy(GameState, 3), !.
+
+print_game_menu:-
     nl,
     print('================================================'), nl,
     print('|                    GAME                      |'), nl,
@@ -95,15 +93,20 @@ game_menu:-
     print('                                                '), nl,
     print('================================================'), nl.
 
-process_game_menu_input(1, GameState) :- 
-    game_loop(b, GameState, 1, 0, 0, [1]), !.
 
-process_game_menu_input(3, GameState) :- 
-    choose_strategy(GameState, 3).
+% AI Menu
 
-% Choose AI Strategy
+ai_menu(ai, player) :-
+    print_ai_menu,
+    read_input(Input),
+    option_ai_menu(Input).
 
-strategy_menu :-
+ai_menu(ai, ai) :-
+    print_ai_menu,
+    read_input(Input),
+    option_ai_menu(Input).
+
+print_ai_menu :-
     nl,
     print('================================================'), nl,
     print('|                  AI STRATEGY                 |'), nl,

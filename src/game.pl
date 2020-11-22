@@ -13,7 +13,9 @@ next_player(b, w).
 
 % Starts game
 
-
+start_game(player, player, Rows, Columns) :-
+    generate_board(Rows, Columns, GameState),
+    game_loop(b, GameState, 0, 0, [1]).
 
 % End of game loop
 
