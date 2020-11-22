@@ -98,7 +98,7 @@ ai_menu('AI VS AI', Rows, Columns) :-
     read_input(Input2),                                     % Receives user option
     option_ai_menu(Input2, Strat2),                         % Sets strategy for white AI
 
-    start_game([Strat1, Strat2], Rows, Columns).  % Starts AIvsAI game with startegys
+    start_game([Strat1, Strat2], Rows, Columns).            % Starts AI VS AI game with startegys
 
 option_ai_menu(1, randomAI).  % Random Strategy
 option_ai_menu(2, smartAI).   % Smart Strategy
