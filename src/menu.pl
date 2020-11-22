@@ -27,7 +27,7 @@ option_start_menu(3) :- !.                      % Exit
 option_start_menu(1) :- board_menu, !.          % Start Game          
 option_start_menu(2) :- print_instructions, !.  % Instructions     
 
-print_start_menu:-
+print_start_menu:-  % Prints Start menu
     nl,
     print('================================================'), nl,
     print('|                   GREENER                    |'), nl,
@@ -41,19 +41,18 @@ print_start_menu:-
 
 % Board Menu
 
-board_menu :- 
-    print_board_menu,              
-    read_input(Input),
-    option_board_menu(Input),
-    Input =:= 4.
+board_menu :-                       
+    print_board_menu,           % Prints board menu       
+    read_input(Input),          % Receives user option
+    option_board_menu(Input),   % Processs option
+    Input =:= 4.                % Go Back to other menu
 
 option_board_menu(4) :- !.                  % Back
 option_board_menu(1) :- game_menu(6, 6), !. % 6x6
 option_board_menu(2) :- game_menu(6, 9), !. % 6x9
 option_board_menu(3) :- game_menu(9, 9), !. % 9x9
             
-    
-print_board_menu:-
+print_board_menu:-  % Prints board menu
     nl,
     print('================================================'), nl,
     print('|                    BOARD                     |'), nl,
@@ -68,16 +67,16 @@ print_board_menu:-
 
 % Game Menu
 
-game_menu(Rows, Columns) :-
-    print_game_menu,
-    read_input(Input),
-    option_game_menu(Input, Rows, Columns),
-    Input =:= 4.
+game_menu(Rows, Columns) :-                 
+    print_game_menu,                        % Prins Game Menu
+    read_input(Input),                      % Receives user option
+    option_game_menu(Input, Rows, Columns), % Process option
+    Input =:= 4.                            % Go Back
 
-option_game_menu(4, Rows, Columns) :- !. % Back 
-option_game_menu(1, Rows, Columns) :- start_game(player, player, Rows, Columns), !.
-option_game_menu(2, Rows, Columns) :- ai_menu(ai, player, Rows, Columns), !.
-option_game_menu(3, Rows, Columns) :- ai_menu(ai, ai, Rows, Columns), !.
+option_game_menu(4, Rows, Columns) :- !.                                            % Back 
+option_game_menu(1, Rows, Columns) :- start_game(player, player, Rows, Columns), !. % Starts PvP
+option_game_menu(2, Rows, Columns) :- ai_menu(ai, player, Rows, Columns), !.        % AI vs Player 
+option_game_menu(3, Rows, Columns) :- ai_menu(ai, ai, Rows, Columns), !.            % AI vs AI
 
 print_game_menu:-
     nl,
@@ -95,27 +94,27 @@ print_game_menu:-
 
 % AI Menu
 
-ai_menu(ai, player, Rows, Columns) :-
-    print_ai_menu,
-    read_input(Input),
-    option_ai_menu(Input, Strat),
-    start_game(player, ai, Strat, Rows, Columns).
+ai_menu(ai, player, Rows, Columns) :-               % AI vs Player
+    print_ai_menu,                                  % Prints AI Menu
+    read_input(Input),                              % Receives user option
+    option_ai_menu(Input, Strat),                   % Gets strategy of AI
+    start_game(player, ai, Strat, Rows, Columns).   % Starts Game Player vs AI using Strategy Strat
 
 ai_menu(ai, ai, Rows, Columns) :-
-    print_ai_menu,
+    print_ai_menu,                                       % Prints AI Menu
 
     print('Choose strategy for black AI:'), nl,
-    read_input(Input1),
-    option_ai_menu(Input1, Strat1),
+    read_input(Input1),                                 % Receives user option
+    option_ai_menu(Input1, Strat1),                     % Sets strategy for black AI
 
     print('Choose strategy for white AI:'), nl,
-    read_input(Input2),
-    option_ai_menu(Input2, Strat2),
+    read_input(Input2),                                 % Receives user option
+    option_ai_menu(Input2, Strat2),                     % Sets strategy for white AI
 
-    start_game(ai, ai, Strat1, Strat2, Rows, Columns).
+    start_game(ai, ai, Strat1, Strat2, Rows, Columns).  % Starts AIvsAI game with startegys
 
-option_ai_menu(1, random).
-option_ai_menu(2, smart).   
+option_ai_menu(1, random).  % Random Strategy
+option_ai_menu(2, smart).   % Smart Strategy
 
 
 print_ai_menu :-
@@ -128,6 +127,46 @@ print_ai_menu :-
     print('                  2 - Smart                     '), nl,
     print('                                                '), nl,
     print('================================================'), nl.
+
+
+% instructions
+
+print_instructions :-
+    nl,
+    print('================================================================'), nl,
+    print('|                           HOW TO PLAY                        |'), nl,
+    print('================================================================'), nl,
+    print('                                                                '), nl,
+    print('   Players take turns (starting by Black) capturing pyramids or '), nl, 
+    print('  stacks of any colour on the same row or column and with no    '), nl,
+    print('  stacks between them.                                          '), nl,
+    print('                                                                '), nl,
+    print('   On your turn you must make one capture if possible, otherwise'), nl,
+    print('   you pass the turn.                                           '), nl,
+    print('                                                                '), nl,
+    print('   The game ends when all players pass in succession.           '), nl,
+    print('                                                                '), nl,
+    print('   The player with the most green pyramids captured (being      '), nl,
+    print('  part of stacks they control) wins the game.                   '), nl,
+    print('   In case of a tie, the player with the highest stack wins.    '), nl,
+    print('   If the tie persists, play again.                             '), nl,
+    print('                                                                '), nl,
+    print('   Good luck and have fun!                                      '), nl,
+    print('                                                                '), nl,
+    print('================================================================'), nl.
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 wait_enter :-
@@ -155,30 +194,3 @@ choose_move_input(Player, GameState, NewGameState) :-
 process_choose_move_input(Player, GameState, [I0, J0, I1, J1], NewGameState) :- 
     move(GameState, [I0, J0, I1, J1], NewGameState),
     valid_move(Player, GameState, NewGameState).
-
-% Prints instructions of game
-
-print_instructions :-
-    nl,
-    print('================================================================'), nl,
-    print('|                           HOW TO PLAY                        |'), nl,
-    print('================================================================'), nl,
-    print('                                                                '), nl,
-    print('   Players take turns (starting by Black) capturing pyramids or '), nl, 
-    print('  stacks of any colour on the same row or column and with no    '), nl,
-    print('  stacks between them.                                          '), nl,
-    print('                                                                '), nl,
-    print('   On your turn you must make one capture if possible, otherwise'), nl,
-    print('   you pass the turn.                                           '), nl,
-    print('                                                                '), nl,
-    print('   The game ends when all players pass in succession.           '), nl,
-    print('                                                                '), nl,
-    print('   The player with the most green pyramids captured (being      '), nl,
-    print('  part of stacks they control) wins the game.                   '), nl,
-    print('   In case of a tie, the player with the highest stack wins.    '), nl,
-    print('   If the tie persists, play again.                             '), nl,
-    print('                                                                '), nl,
-    print('   Good luck and have fun!                                      '), nl,
-    print('                                                                '), nl,
-    print('================================================================'), nl.
-

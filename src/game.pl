@@ -5,6 +5,8 @@
 :- consult('display.pl').
 :- consult('menu.pl').
 :- consult('moves.pl').
+:- consult('utils.pl').
+
 
 % Defines what color is playing next
 
@@ -13,17 +15,17 @@ next_player(b, w).
 
 % Starts game
 
-start_game(player, player, Rows, Columns) :-
-    generate_board(Rows, Columns, GameState),
-    game_loop(player, player, b, GameState, 0, 0).
+start_game(player, player, Rows, Columns) :-            % Starts PvP game
+    generate_board(Rows, Columns, GameState),           % Generates board
+    game_loop(player, player, b, GameState, 0, 0).      % Starts game with black playing first
 
-start_game(player, ai, Strat, Rows, Columns) :-
-    generate_board(Rows, Columns, GameState),
-    print('Not yet implemented'), nl.
+start_game(player, ai, Strat, Rows, Columns) :-         % Starts Player vs AI game
+    generate_board(Rows, Columns, GameState),           % Generates board
+    print('Not yet implemented'), nl.                   % Starts game with white playing first
 
-start_game(ai, ai, Strat1, Start2, Rows, Columns) :-
-    generate_board(Rows, Columns, GameState),
-    game_loop(ai, ai, b, GameState, 0, 0).
+start_game(ai, ai, Strat1, Start2, Rows, Columns) :-    % Starts AI vs AI game
+    generate_board(Rows, Columns, GameState),           % Generates board
+    game_loop(ai, ai, b, GameState, 0, 0).              % Starts game with white playing first
 
 
 % End of game loop
@@ -31,6 +33,7 @@ start_game(ai, ai, Strat1, Start2, Rows, Columns) :-
 game_loop(_, _, _, GameState, 1, 1) :-
     game_over(GameState, Winner),
     format('The winner is ~w', Winner), !.
+
 
 % Player VS Player
 
@@ -46,7 +49,8 @@ game_loop(player, player, Player, GameState, _, _) :-
     next_player(Player, NextPlayer),
     game_loop(player, player, NextPlayer, NewGameState, BlackFinished, WhiteFinished).
 
-% AI with random difficulty level
+
+% AI vs AI
 
 game_loop(ai, ai, Player, GameState, _, _) :-
     display_game(GameState, Player),

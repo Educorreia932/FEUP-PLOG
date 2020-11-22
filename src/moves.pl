@@ -1,7 +1,4 @@
 :- use_module(library(between)).
-:- use_module(library(lists)).
-
-:- consult('utils.pl').
 
 % Move piece from a cell to other
 

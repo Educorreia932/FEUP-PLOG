@@ -1,5 +1,3 @@
-:- consult('utils.pl').
-
 player(w, 'White').
 player(b, 'Black').
 

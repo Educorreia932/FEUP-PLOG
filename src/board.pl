@@ -1,8 +1,4 @@
-:- consult('utils.pl').
-
-:- use_module(library(random)).
 :- use_module(library(system)).
-:- use_module(library(lists)).
 
 % Checks if two pair of coordinates correspond to the same cell
 
