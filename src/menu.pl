@@ -76,9 +76,8 @@ game_menu(Rows, Columns) :-
 
 option_game_menu(4, Rows, Columns) :- !. % Back 
 option_game_menu(1, Rows, Columns) :- start_game(player, player, Rows, Columns), !.
-
-option_game_menu(3, Rows, Columns) :- 
-    choose_strategy(Rows, Columns, 3), !.
+option_game_menu(2, Rows, Columns) :- ai_menu(ai, player, Rows, Columns), !.
+option_game_menu(3, Rows, Columns) :- ai_menu(ai, ai, Rows, Columns), !.
 
 print_game_menu:-
     nl,
@@ -96,15 +95,28 @@ print_game_menu:-
 
 % AI Menu
 
-ai_menu(ai, player) :-
+ai_menu(ai, player, Rows, Columns) :-
     print_ai_menu,
     read_input(Input),
-    option_ai_menu(Input).
+    option_ai_menu(Input, Strat),
+    start_game(player, ai, Strat, Rows, Columns).
 
-ai_menu(ai, ai) :-
+ai_menu(ai, ai, Rows, Columns) :-
     print_ai_menu,
-    read_input(Input),
-    option_ai_menu(Input).
+
+    print('Choose strategy for black AI:'), nl,
+    read_input(Input1),
+    option_ai_menu(Input1, Strat1),
+
+    print('Choose strategy for white AI:'), nl,
+    read_input(Input2),
+    option_ai_menu(Input2, Strat2),
+
+    start_game(ai, ai, Strat1, Strat2, Rows, Columns).
+
+option_ai_menu(1, random).
+option_ai_menu(2, smart).   
+
 
 print_ai_menu :-
     nl,
@@ -117,13 +129,6 @@ print_ai_menu :-
     print('                                                '), nl,
     print('================================================'), nl.
 
-choose_strategy(GameState, GameMode) :-
-    strategy_menu,
-    read_input(Strategy),
-    process_strategy_input(GameState, GameMode, Strategy).
-
-process_strategy_input(GameState, GameMode, Strategy) :-
-    game_loop(b, GameState, 0, 0, [GameMode, Strategy]), !.
 
 wait_enter :-
 	write('Press <Any Key> to continue.\n'),

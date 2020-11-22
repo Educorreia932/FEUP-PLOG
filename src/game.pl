@@ -15,26 +15,40 @@ next_player(b, w).
 
 start_game(player, player, Rows, Columns) :-
     generate_board(Rows, Columns, GameState),
-    game_loop(b, GameState, 0, 0, [1]).
+    game_loop(player, player, b, GameState, 0, 0).
+
+start_game(player, ai, Strat, Rows, Columns) :-
+    generate_board(Rows, Columns, GameState),
+    print('Not yet implemented'), nl.
+
+start_game(ai, ai, Strat1, Start2, Rows, Columns) :-
+    generate_board(Rows, Columns, GameState),
+    game_loop(ai, ai, b, GameState, 0, 0).
+
 
 % End of game loop
 
-game_loop(_, GameState, 1, 1, _) :-
+game_loop(_, _, _, GameState, 1, 1) :-
     game_over(GameState, Winner),
     format('The winner is ~w', Winner), !.
 
 % Player VS Player
 
-game_loop(Player, GameState, _, _, [1]) :-
+game_loop(player, player, Player, GameState, _, _) :-
     display_game(GameState, Player),
     choose_move_input(Player, GameState, NewGameState),
+    (GameState == NewGameState -> 
+        (Player == b -> BlackFinished is 1;
+         Player == w -> WhiteFinished is 1);
+     BlackFinished is 0, WhiteFinished is 0
+    ),
     clear_screen,
     next_player(Player, NextPlayer),
-    game_loop(NextPlayer, NewGameState, 1).
+    game_loop(player, player, NextPlayer, NewGameState, BlackFinished, WhiteFinished).
 
 % AI with random difficulty level
 
-game_loop(Player, GameState, _, _, [3, 1]) :-
+game_loop(ai, ai, Player, GameState, _, _) :-
     display_game(GameState, Player),
     choose_move(GameState, Player, 1, NewGameState),
     (GameState == NewGameState -> 
