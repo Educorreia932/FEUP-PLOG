@@ -14,17 +14,17 @@ next_player(b, w).
 
 % Starts game
 
-start_game('Player VS Player', Rows, Columns) :-                  % Starts PvP game
-    generate_board(Rows, Columns, GameState),                     % Generates board
-    game_loop('Player VS Player', b, GameState, 0, 0).            % Starts game with black playing first
+start_game(Strats, Rows, Columns) :-   % Starts PvP game
+    generate_board(Rows, Columns, GameState),              % Generates board
+    game_loop(b, Strats, GameState, 0, 0).                 % Starts game with black playing first
 
-start_game('Player VS AI', Strat, Rows, Columns) :-               % Starts Player vs AI game
-    generate_board(Rows, Columns, GameState),                     % Generates board
-    print('Not yet implemented'), nl.                             % Starts game with white playing first
+start_game(Strats, Rows, Columns) :-       % Starts Player vs AI game
+    generate_board(Rows, Columns, GameState),              % Generates board
+    game_loop(b, Strats, GameState, 0, 0).                 % Starts game with black playing first
 
-start_game('AI VS AI', Strat1, Strat2, Rows, Columns) :-          % Starts AI vs AI game
-    generate_board(Rows, Columns, GameState),                     % Generates board
-    game_loop('AI VS AI', b, [Strat1, Strat2], GameState, 0, 0).  % Starts game with white playing first
+start_game(Strats, Rows, Columns) :-           % Starts AI vs AI game
+    generate_board(Rows, Columns, GameState),              % Generates board
+    game_loop(b, Strats, GameState, 0, 0).                 % Starts game with black playing first
 
 % Game Over
 
@@ -37,16 +37,34 @@ winner(BlackValue, WhiteValue, 'Black') :- BlackValue > WhiteValue.
 winner(BlackValue, WhiteValue, 'White') :- BlackValue < WhiteValue.
 winner(BlackValue, WhiteValue, 'Draw') :- BlackValue =:= WhiteValue.
 
-game_loop(_, _, _, GameState, 1, 1) :-
+game_loop(_, _, GameState, 1, 1) :-
     game_over(GameState, Winner),
     (Winner = 'Draw' -> format('There\'s no winner', Winner); 
     format('The winner is ~w', Winner)), !.
 
-% Player VS Player
+% Convert player color  to an index
 
-game_loop('Player VS Player', Player, [], GameState, _, _) :-
-    display_game(GameState, Player),
-    move_input(Player, GameState, NewGameState),
+player_index(b, 0).
+player_index(w, 1).
+
+% Player strategy
+
+get_move(Player, GameState, 'player', NewGameState) :-
+    move_input(Player, GameState, NewGameState).
+
+% AI strategy
+
+get_move(Player, GameState, Strat, NewGameState) :-
+    choose_move(GameState, Player, Strat, NewGameState),
+    sleep(0.5).
+
+% Game loop
+
+game_loop(Player, Strats, GameState, _, _) :-
+    display_game(GameState, Player),                     % Display the current state of the game
+    player_index(Player, PlayerIndex),                   % Convert current player to an index
+    nth0(PlayerIndex, Strats, Strat),                    % Get current strategy
+    get_move(Player, GameState, Strat, NewGameState),    % Get next move
     (GameState == NewGameState -> 
         (Player == b -> BlackFinished is 1;
          Player == w -> WhiteFinished is 1);
@@ -54,43 +72,28 @@ game_loop('Player VS Player', Player, [], GameState, _, _) :-
     ),
     clear_screen,
     next_player(Player, NextPlayer),
-    game_loop('Player VS Player', NextPlayer, [], NewGameState, BlackFinished, WhiteFinished).
+    game_loop(NextPlayer, Strats, NewGameState, BlackFinished, WhiteFinished).
 
-% Player VS AI
-    
-game_loop('Player VS AI', Player, [Strat], GameState, _, _).
+% There are no valid moves
 
-% AI vs AI
+choose_move(GameState, Player, _, _) :-
+    valid_moves(GameState, Player, []).             
 
-game_loop('AI VS AI', Player, [Strat1, Start2], GameState, _, _) :-
-    display_game(GameState, Player),
-    choose_move(GameState, Player, NewGameState, smartAI),
-    (GameState == NewGameState -> 
-        (Player == b -> BlackFinished is 1;
-         Player == w -> WhiteFinished is 1);
-     BlackFinished is 0, WhiteFinished is 0
-    ),
-    sleep(0.5),
-    clear_screen,
-    next_player(Player, NextPlayer),
-    game_loop('AI VS AI', NextPlayer, [Strat1, Strat2], NewGameState, BlackFinished, WhiteFinished).
+% Random AI
 
-% Choose move
-
-choose_move(GameState, Player, GameState, _) :-
-    valid_moves(GameState, Player, []).             % There are no valid moves
-
-choose_move(GameState, Player, Move, randomAI) :-
+choose_move(GameState, Player, randomAI, Move) :-
     valid_moves(GameState, Player, ListOfMoves),    % Calculates valid moves
     length(ListOfMoves, NumberOfMoves),             % Gets number of valid moves
     random(0, NumberOfMoves, R),                    % Choose a random number
     nth0(R, ListOfMoves, Move).                     % Choose a random move
 
-choose_move(GameState, Player, Move, smartAI) :-
-    valid_moves(GameState, Player, ListOfMoves),    % Calculates valid moves
+% Smart AI
+
+choose_move(GameState, Player, smartAI, Move) :-
+    valid_moves(GameState, Player, ListOfMoves),     % Calculates valid moves
     moves_values(ListOfMoves, Player, MovesValues),  % Calculate value for each move
-    max_list(MovesValues, _, Index),                % Get the highest value move
-    nth0(Index, ListOfMoves, Move).                 % Choose the highest value move
+    max_list(MovesValues, _, Index),                 % Get the highest value move
+    nth0(Index, ListOfMoves, Move).                  % Choose the highest value move
 
 % Calculate value of move
 
@@ -124,3 +127,4 @@ green_pieces([], []).
 green_pieces([C|R], [TC|CR]) :-
     count(C, g, TC),
     green_pieces(R, CR).
+

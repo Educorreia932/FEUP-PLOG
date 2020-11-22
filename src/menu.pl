@@ -61,8 +61,8 @@ game_menu(Rows, Columns) :-
     option_game_menu(Input, Rows, Columns), % Process option
     Input =:= 4.                            % Go Back
 
-option_game_menu(4, Rows, Columns) :- !.                                                   % Back 
-option_game_menu(1, Rows, Columns) :- start_game('Player VS Player', Rows, Columns), !.    % Starts PvP
+option_game_menu(4, _, _) :- !.                                                   % Back 
+option_game_menu(1, Rows, Columns) :- start_game(['player', 'player'], Rows, Columns), !.                 % Starts PvP
 option_game_menu(2, Rows, Columns) :- ai_menu('Player VS AI', Rows, Columns), !.           % AI vs Player 
 option_game_menu(3, Rows, Columns) :- ai_menu('AI VS AI', Rows, Columns), !.               % AI vs AI
 
@@ -81,27 +81,27 @@ print_game_menu:-
 
 % AI Menu
 
-ai_menu('Player VS AI', Rows, Columns) :-               % AI vs Player
-    print_ai_menu,                                      % Prints AI Menu
-    read_input(Input),                                  % Receives user option
-    option_ai_menu(Input, Strat),                       % Gets strategy of AI
-    start_game('Player VS AI', Strat, Rows, Columns).   % Starts Game Player vs AI using Strategy Strat
+ai_menu('Player VS AI', Rows, Columns) :-     % AI vs Player
+    print_ai_menu,                            % Prints AI Menu
+    read_input(Input),                        % Receives user option
+    option_ai_menu(Input, Strat),             % Gets strategy of AI
+    color_menu(Strat, Rows, Columns).         % Calls color menu
 
 ai_menu('AI VS AI', Rows, Columns) :-
-    print_ai_menu,                                       % Prints AI Menu
+    print_ai_menu,                                          % Prints AI Menu
 
     print('Choose strategy for black AI:'), nl,
-    read_input(Input1),                                 % Receives user option
-    option_ai_menu(Input1, Strat1),                     % Sets strategy for black AI
+    read_input(Input1),                                     % Receives user option
+    option_ai_menu(Input1, Strat1),                         % Sets strategy for black AI
 
     print('Choose strategy for white AI:'), nl,
-    read_input(Input2),                                 % Receives user option
-    option_ai_menu(Input2, Strat2),                     % Sets strategy for white AI
+    read_input(Input2),                                     % Receives user option
+    option_ai_menu(Input2, Strat2),                         % Sets strategy for white AI
 
-    start_game('AI VS AI', Strat1, Strat2, Rows, Columns).  % Starts AIvsAI game with startegys
+    start_game([Strat1, Strat2], Rows, Columns).  % Starts AIvsAI game with startegys
 
-option_ai_menu(1, random).  % Random Strategy
-option_ai_menu(2, smart).   % Smart Strategy
+option_ai_menu(1, randomAI).  % Random Strategy
+option_ai_menu(2, smartAI).   % Smart Strategy
 
 print_ai_menu :-
     nl,
@@ -111,6 +111,29 @@ print_ai_menu :-
     print('                                                '), nl,
     print('                  1 - Random                    '), nl,
     print('                  2 - Smart                     '), nl,
+    print('                                                '), nl,
+    print('================================================'), nl.
+
+% Color Menu 
+
+color_menu(Strat, Rows, Columns) :- 
+    print_color_menu,
+    read_input(Input),                                  % Receives user option
+    option_color_menu(Input, Color),                    % Gets color of AI
+    (Color = black -> start_game(['player', Strat], Rows, Columns);
+    start_game([Strat, 'player'], Rows, Columns)).       % Starts Game Player vs AI using Strategy Strat
+
+option_color_menu(1, black).   % Random Strategy
+option_color_menu(2, white).   % Smart Strategy
+
+print_color_menu :-
+    nl,
+    print('================================================'), nl,
+    print('|                    AI COLOR                  |'), nl,
+    print('================================================'), nl,
+    print('                                                '), nl,
+    print('                  1 - Black                     '), nl,
+    print('                  2 - White                     '), nl,
     print('                                                '), nl,
     print('================================================'), nl.
 
