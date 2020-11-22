@@ -15,10 +15,10 @@ get_cell(Board, I, J, Stack) :-
 % Converts a column's letter to an index
 
 column_index(ColumnIn, ColumnOut) :-
-    member(ColumnIn, ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I']),
+    atom_length(ColumnIn, Length),
+    Length =:= 1,
     char_code(ColumnIn, Code),
     ColumnOut is Code - 65.
-
 
 % List of all pieces
 

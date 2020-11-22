@@ -61,10 +61,10 @@ game_menu(Rows, Columns) :-
     option_game_menu(Input, Rows, Columns), % Process option
     Input =:= 4.                            % Go Back
 
-option_game_menu(4, Rows, Columns) :- !.                                            % Back 
-option_game_menu(1, Rows, Columns) :- start_game(player, player, Rows, Columns), !. % Starts PvP
-option_game_menu(2, Rows, Columns) :- ai_menu(ai, player, Rows, Columns), !.        % AI vs Player 
-option_game_menu(3, Rows, Columns) :- ai_menu(ai, ai, Rows, Columns), !.            % AI vs AI
+option_game_menu(4, Rows, Columns) :- !.                                                   % Back 
+option_game_menu(1, Rows, Columns) :- start_game('Player VS Player', Rows, Columns), !.    % Starts PvP
+option_game_menu(2, Rows, Columns) :- ai_menu('Player VS AI', Rows, Columns), !.           % AI vs Player 
+option_game_menu(3, Rows, Columns) :- ai_menu('AI VS AI', Rows, Columns), !.               % AI vs AI
 
 print_game_menu:-
     nl,
@@ -79,16 +79,15 @@ print_game_menu:-
     print('                                                '), nl,
     print('================================================'), nl.
 
-
 % AI Menu
 
-ai_menu(ai, player, Rows, Columns) :-               % AI vs Player
-    print_ai_menu,                                  % Prints AI Menu
-    read_input(Input),                              % Receives user option
-    option_ai_menu(Input, Strat),                   % Gets strategy of AI
-    start_game(player, ai, Strat, Rows, Columns).   % Starts Game Player vs AI using Strategy Strat
+ai_menu('Player VS AI', Rows, Columns) :-               % AI vs Player
+    print_ai_menu,                                      % Prints AI Menu
+    read_input(Input),                                  % Receives user option
+    option_ai_menu(Input, Strat),                       % Gets strategy of AI
+    start_game('Player VS AI', Strat, Rows, Columns).   % Starts Game Player vs AI using Strategy Strat
 
-ai_menu(ai, ai, Rows, Columns) :-
+ai_menu('AI VS AI', Rows, Columns) :-
     print_ai_menu,                                       % Prints AI Menu
 
     print('Choose strategy for black AI:'), nl,
@@ -99,11 +98,10 @@ ai_menu(ai, ai, Rows, Columns) :-
     read_input(Input2),                                 % Receives user option
     option_ai_menu(Input2, Strat2),                     % Sets strategy for white AI
 
-    start_game(ai, ai, Strat1, Strat2, Rows, Columns).  % Starts AIvsAI game with startegys
+    start_game('AI VS AI', Strat1, Strat2, Rows, Columns).  % Starts AIvsAI game with startegys
 
 option_ai_menu(1, random).  % Random Strategy
 option_ai_menu(2, smart).   % Smart Strategy
-
 
 print_ai_menu :-
     nl,
@@ -116,7 +114,6 @@ print_ai_menu :-
     print('                                                '), nl,
     print('================================================'), nl.
 
-
 % instructions
 
 print_instructions :-
@@ -126,8 +123,8 @@ print_instructions :-
     print('================================================================'), nl,
     print('                                                                '), nl,
     print('   Players take turns (starting by Black) capturing pyramids or '), nl, 
-    print('  stacks of any colour on the same row or column and with no    '), nl,
-    print('  stacks between them.                                          '), nl,
+    print('   stacks of any colour on the same row or column and with no   '), nl,
+    print('   stacks between them.                                         '), nl,
     print('                                                                '), nl,
     print('   On your turn you must make one capture if possible, otherwise'), nl,
     print('   you pass the turn.                                           '), nl,
@@ -142,8 +139,6 @@ print_instructions :-
     print('   Good luck and have fun!                                      '), nl,
     print('                                                                '), nl,
     print('================================================================'), nl.
-
-
 
 % Input
 
@@ -161,7 +156,6 @@ read_input_all(Character, [Character|T]) :-
     get_code(C),
     read_input_all(C, T), !.
 
-
 % Waits for user to press any key
 
 wait_enter :-
@@ -172,11 +166,13 @@ wait_enter :-
 % Ask play to choose a cell
 
 cell_input(Row, Column) :-
-    print('Row: '),
-    read_input(I),              % Receive input Row
     print('Column: '),
     read_input(J),              % Receive input Column
     column_index(J, Column),    % Translate column
+    
+    print('Row: '),
+    read_input(I),              % Receive input Row
+    integer(I),                 % Check if it is a number
     Row is I - 1.               % Translate row
 
 % Ask player for its turn's move

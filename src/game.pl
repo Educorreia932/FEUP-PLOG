@@ -7,7 +7,6 @@
 :- consult('moves.pl').
 :- consult('utils.pl').
 
-
 % Defines what color is playing next
 
 next_player(w, b).
@@ -15,37 +14,37 @@ next_player(b, w).
 
 % Starts game
 
-start_game(player, player, Rows, Columns) :-            % Starts PvP game
-    generate_board(Rows, Columns, GameState),           % Generates board
-    game_loop(player, player, b, GameState, 0, 0).      % Starts game with black playing first
+start_game('Player VS Player', Rows, Columns) :-            % Starts PvP game
+    generate_board(Rows, Columns, GameState),               % Generates board
+    game_loop('Player VS Player', b, GameState, 0, 0).      % Starts game with black playing first
 
-start_game(player, ai, Strat, Rows, Columns) :-         % Starts Player vs AI game
-    generate_board(Rows, Columns, GameState),           % Generates board
-    print('Not yet implemented'), nl.                   % Starts game with white playing first
+start_game('Player VS AI', Strat, Rows, Columns) :-         % Starts Player vs AI game
+    generate_board(Rows, Columns, GameState),               % Generates board
+    print('Not yet implemented'), nl.                       % Starts game with white playing first
 
-start_game(ai, ai, Strat1, Start2, Rows, Columns) :-    % Starts AI vs AI game
-    generate_board(Rows, Columns, GameState),           % Generates board
-    game_loop(ai, ai, b, GameState, 0, 0).              % Starts game with white playing first
-
+start_game('AI VS AI', Strat1, Start2, Rows, Columns) :-    % Starts AI vs AI game
+    generate_board(Rows, Columns, GameState),               % Generates board
+    game_loop('AI VS AI', b, GameState, 0, 0).              % Starts game with white playing first
 
 % Game Over
 
 game_over(GameState, Winner) :-
     value(GameState, b, BlackValue),                % Calculates value for black 
     value(GameState, w, WhiteValue),                % Calculates value for white
-    winner(BlackValue, WhiteValue, Winner).
+    winner(BlackValue, WhiteValue, Winner).         % Sets winner
 
 winner(BlackValue, WhiteValue, 'Black') :- BlackValue > WhiteValue.
 winner(BlackValue, WhiteValue, 'White') :- BlackValue < WhiteValue.
+winner(BlackValue, WhiteValue, 'Draw') :- BlackValue =:= WhiteValue.
 
 game_loop(_, _, _, GameState, 1, 1) :-
     game_over(GameState, Winner),
-    format('The winner is ~w', Winner), !.
-
+    (Winner = 'Draw' -> format('There\'s no winner', Winner); 
+    format('The winner is ~w', Winner)), !.
 
 % Player VS Player
 
-game_loop(player, player, Player, GameState, _, _) :-
+game_loop('Player VS Player', Player, GameState, _, _) :-
     display_game(GameState, Player),
     move_input(Player, GameState, NewGameState),
     (GameState == NewGameState -> 
@@ -55,12 +54,11 @@ game_loop(player, player, Player, GameState, _, _) :-
     ),
     clear_screen,
     next_player(Player, NextPlayer),
-    game_loop(player, player, NextPlayer, NewGameState, BlackFinished, WhiteFinished).
-
+    game_loop('Player VS Player', NextPlayer, NewGameState, BlackFinished, WhiteFinished).
 
 % AI vs AI
 
-game_loop(ai, ai, Player, GameState, _, _) :-
+game_loop('AI VS AI', Player, GameState, _, _) :-
     display_game(GameState, Player),
     choose_move(GameState, Player, NewGameState, randomAI),
     (GameState == NewGameState -> 
@@ -71,7 +69,7 @@ game_loop(ai, ai, Player, GameState, _, _) :-
     sleep(0.5),
     clear_screen,
     next_player(Player, NextPlayer),
-    game_loop(ai, ai, NextPlayer, NewGameState, BlackFinished, WhiteFinished).
+    game_loop('AI VS AI', NextPlayer, NewGameState, BlackFinished, WhiteFinished).
 
 % Choose move
 
@@ -110,4 +108,3 @@ green_pieces([], []).
 green_pieces([C|R], [TC|CR]) :-
     count(C, g, TC),
     green_pieces(R, CR).
-
