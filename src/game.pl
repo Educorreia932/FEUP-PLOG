@@ -39,7 +39,7 @@ game_loop(_, _, _, GameState, 1, 1) :-
 
 game_loop(player, player, Player, GameState, _, _) :-
     display_game(GameState, Player),
-    choose_move_input(Player, GameState, NewGameState),
+    move_input(Player, GameState, NewGameState),
     (GameState == NewGameState -> 
         (Player == b -> BlackFinished is 1;
          Player == w -> WhiteFinished is 1);

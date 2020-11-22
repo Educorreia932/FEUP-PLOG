@@ -171,29 +171,29 @@ wait_enter :-
 
 % Ask play to choose a cell
 
-choose_cell_input(Row, Column) :-
+cell_input(Row, Column) :-
     print('Row: '),
-    read_input(I),
+    read_input(I),              % Receive input Row
     print('Column: '),
-    read_input(J),
-    column_index(J, Column),
-    Row is I - 1.
+    read_input(J),              % Receive input Column
+    column_index(J, Column),    % Translate column
+    Row is I - 1.               % Translate row
 
 % Ask player for its turn's move
 
-choose_move_input(Player, GameState, NewGameState) :-
-    repeat,
+move_input(Player, GameState, NewGameState) :-
+    repeat,                                                             % Repeat if input Failed
         nl, nl,
-        print('Please make a move.'), nl, nl,
+        print('Please make a move.'), nl, nl,   
 
         print('Piece to move:'), nl,
-        choose_cell_input(I0, J0), nl,
+        cell_input(I0, J0), nl,                                         % Get stack to move
 
         print('Cell to move to:'), nl,
-        choose_cell_input(I1, J1),
-        process_choose_move_input(Player, GameState, [I0, J0, I1, J1], NewGameState),
+        cell_input(I1, J1),                                             % Get destination
+        make_move(Player, GameState, [I0, J0, I1, J1], NewGameState),   % Apply move
         nl.
 
-process_choose_move_input(Player, GameState, [I0, J0, I1, J1], NewGameState) :- 
-    move(GameState, [I0, J0, I1, J1], NewGameState),
-    valid_move(Player, GameState, NewGameState).
+make_move(Player, GameState, [I0, J0, I1, J1], NewGameState) :- 
+    move(GameState, [I0, J0, I1, J1], NewGameState),            % Apply move
+    valid_move(Player, GameState, NewGameState).                % Verify if move is valid
