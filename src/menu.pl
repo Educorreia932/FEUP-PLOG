@@ -1,16 +1,4 @@
-read_input(Input) :-
-    get_code(Character),
-    read_input_all(Character, Characters),       
-    name(Input, Characters), !.
-
-read_input_all(10, []) :- !.
-read_input_all(13, []) :- !.
-
-read_input_all(Character, [Character|T]) :-
-    get_code(C),
-    read_input_all(C, T), !.
-
-% Start Game
+% Start Program
 
 play :-
     now(T),                         % Seed for RNG
@@ -157,39 +145,54 @@ print_instructions :-
 
 
 
+% Input
+
+% Used for reading user input without '.'
+
+read_input(Input) :-
+    get_code(Character),
+    read_input_all(Character, Characters),       
+    name(Input, Characters), !.
+
+read_input_all(10, []) :- !.
+read_input_all(13, []) :- !.
+
+read_input_all(Character, [Character|T]) :-
+    get_code(C),
+    read_input_all(C, T), !.
 
 
-
-
-
-
-
-
-
-
-
+% Waits for user to press any key
 
 wait_enter :-
 	write('Press <Any Key> to continue.\n'),
 	get_char(_), !.
 
+
 % Ask play to choose a cell
 
 choose_cell_input(Row, Column) :-
-    read_input(J),
+    print('Row: '),
     read_input(I),
+    print('Column: '),
+    read_input(J),
     column_index(J, Column),
     Row is I - 1.
 
 % Ask player for its turn's move
 
 choose_move_input(Player, GameState, NewGameState) :-
-    nl,
-    print('What\'s your move?'), nl,    
-    choose_cell_input(I0, J0),
-    choose_cell_input(I1, J1),
-    process_choose_move_input(Player, GameState, [I0, J0, I1, J1], NewGameState),
-    nl.
+    repeat,
+        nl, nl,
+        print('Please make a move.'), nl, nl,
+
+        print('Piece to move:'), nl,
+        choose_cell_input(I0, J0), nl,
+
+        print('Cell to move to:'), nl,
+        choose_cell_input(I1, J1),
+        process_choose_move_input(Player, GameState, [I0, J0, I1, J1], NewGameState),
+        nl.
 
 process_choose_move_input(Player, GameState, [I0, J0, I1, J1], NewGameState) :- 
     move(GameState, [I0, J0, I1, J1], NewGameState),
