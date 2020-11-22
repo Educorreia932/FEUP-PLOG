@@ -80,3 +80,9 @@ flatten([A|B],L) :-
 
 flatten([A|B], [A|B1]) :- 
     flatten(B, B1).
+
+% Returns the index of the maximum value of a list
+
+max_list(L, M, I) :- 
+    nth0(I, L, M), 
+    \+ (member(E, L), E > M).

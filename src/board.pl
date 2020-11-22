@@ -59,6 +59,5 @@ fill_board(Pieces, Collumns, Rows, Board) :-
 % Generates random game board, filling it with pieces
 
 generate_board(Collumns, Rows, Board) :-
-
     shuffle_board(Shuffled, Collumns, Rows),            % Shuffles all pieces from the list
     fill_board(Shuffled, Collumns, Rows, Board).       % Fills board with the pieces from list

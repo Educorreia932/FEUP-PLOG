@@ -14,17 +14,17 @@ next_player(b, w).
 
 % Starts game
 
-start_game('Player VS Player', Rows, Columns) :-            % Starts PvP game
-    generate_board(Rows, Columns, GameState),               % Generates board
-    game_loop('Player VS Player', b, GameState, 0, 0).      % Starts game with black playing first
+start_game('Player VS Player', Rows, Columns) :-                  % Starts PvP game
+    generate_board(Rows, Columns, GameState),                     % Generates board
+    game_loop('Player VS Player', b, GameState, 0, 0).            % Starts game with black playing first
 
-start_game('Player VS AI', Strat, Rows, Columns) :-         % Starts Player vs AI game
-    generate_board(Rows, Columns, GameState),               % Generates board
-    print('Not yet implemented'), nl.                       % Starts game with white playing first
+start_game('Player VS AI', Strat, Rows, Columns) :-               % Starts Player vs AI game
+    generate_board(Rows, Columns, GameState),                     % Generates board
+    print('Not yet implemented'), nl.                             % Starts game with white playing first
 
-start_game('AI VS AI', Strat1, Start2, Rows, Columns) :-    % Starts AI vs AI game
-    generate_board(Rows, Columns, GameState),               % Generates board
-    game_loop('AI VS AI', b, GameState, 0, 0).              % Starts game with white playing first
+start_game('AI VS AI', Strat1, Strat2, Rows, Columns) :-          % Starts AI vs AI game
+    generate_board(Rows, Columns, GameState),                     % Generates board
+    game_loop('AI VS AI', b, [Strat1, Strat2], GameState, 0, 0).  % Starts game with white playing first
 
 % Game Over
 
@@ -44,7 +44,7 @@ game_loop(_, _, _, GameState, 1, 1) :-
 
 % Player VS Player
 
-game_loop('Player VS Player', Player, GameState, _, _) :-
+game_loop('Player VS Player', Player, [], GameState, _, _) :-
     display_game(GameState, Player),
     move_input(Player, GameState, NewGameState),
     (GameState == NewGameState -> 
@@ -54,13 +54,17 @@ game_loop('Player VS Player', Player, GameState, _, _) :-
     ),
     clear_screen,
     next_player(Player, NextPlayer),
-    game_loop('Player VS Player', NextPlayer, NewGameState, BlackFinished, WhiteFinished).
+    game_loop('Player VS Player', NextPlayer, [], NewGameState, BlackFinished, WhiteFinished).
+
+% Player VS AI
+    
+game_loop('Player VS AI', Player, [Strat], GameState, _, _).
 
 % AI vs AI
 
-game_loop('AI VS AI', Player, GameState, _, _) :-
+game_loop('AI VS AI', Player, [Strat1, Start2], GameState, _, _) :-
     display_game(GameState, Player),
-    choose_move(GameState, Player, NewGameState, randomAI),
+    choose_move(GameState, Player, NewGameState, smartAI),
     (GameState == NewGameState -> 
         (Player == b -> BlackFinished is 1;
          Player == w -> WhiteFinished is 1);
@@ -69,7 +73,7 @@ game_loop('AI VS AI', Player, GameState, _, _) :-
     sleep(0.5),
     clear_screen,
     next_player(Player, NextPlayer),
-    game_loop('AI VS AI', NextPlayer, NewGameState, BlackFinished, WhiteFinished).
+    game_loop('AI VS AI', NextPlayer, [Strat1, Strat2], NewGameState, BlackFinished, WhiteFinished).
 
 % Choose move
 
@@ -82,7 +86,11 @@ choose_move(GameState, Player, Move, randomAI) :-
     random(0, NumberOfMoves, R),                    % Choose a random number
     nth0(R, ListOfMoves, Move).                     % Choose a random move
 
-choose_move(GameState, Player, Move, smartAI). % TODO
+choose_move(GameState, Player, Move, smartAI) :-
+    valid_moves(GameState, Player, ListOfMoves),    % Calculates valid moves
+    moves_values(ListOfMoves, Player, MovesValues),  % Calculate value for each move
+    max_list(MovesValues, _, Index),                % Get the highest value move
+    nth0(Index, ListOfMoves, Move).                 % Choose the highest value move
 
 % Calculate value of move
 
@@ -91,6 +99,14 @@ value(GameState, Player, Value) :-
     get_stacks(AllStacks, Player, PlayerStacks),    % Retrieve player's stacks
     green_pieces(PlayerStacks, GreenPieces),        % Count the number of green pieces in each stack
     sum(GreenPieces, Value).                        % Get the total number of green pieces
+
+% Map values of each move
+
+moves_values([], _, []).
+
+moves_values([C|R], Player, [Value|CR]) :-
+    value(C, Player, Value),
+    moves_values(R, Player, CR).
 
 % Retrieve stacks controlled by player
 
