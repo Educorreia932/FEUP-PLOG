@@ -3,8 +3,8 @@
 % Checks if two pair of coordinates correspond to the same cell
 
 is_same_cell(I0, J0, I1, J1) :-
-    I0 =:= I1,
-    J0 =:= J1.
+    I0 =:= I1,  % Same Row
+    J0 =:= J1.  % Same Column
 
 % Returns the stack present int the cell with coordinates I, J from the board
 
@@ -15,10 +15,10 @@ get_cell(Board, I, J, Stack) :-
 % Converts a column's letter to an index
 
 column_index(ColumnIn, ColumnOut) :-
-    atom_length(ColumnIn, Length),
-    Length =:= 1,
+    atom_length(ColumnIn, Length),      % Get length of column
+    Length =:= 1,                       % Make sure column is one character long
     char_code(ColumnIn, Code),
-    ColumnOut is Code - 65.
+    ColumnOut is Code - 65.             % Translate Column 
 
 % List of all pieces
 
@@ -61,3 +61,10 @@ fill_board(Pieces, Collumns, Rows, Board) :-
 generate_board(Collumns, Rows, Board) :-
     shuffle_board(Shuffled, Collumns, Rows),            % Shuffles all pieces from the list
     fill_board(Shuffled, Collumns, Rows, Board).       % Fills board with the pieces from list
+
+% Returns the board's width and height
+
+board_dimensions(Board, Width, Height) :- 
+    length(Board, Height),
+    nth0(0, Board, Row),      
+    length(Row, Width).
