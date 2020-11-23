@@ -11,9 +11,9 @@ play :-
 
 % Start Menu
 
-option_start_menu(3) :- !.                      % Exit                       
-option_start_menu(1) :- board_menu, !.          % Start Game          
-option_start_menu(2) :- print_instructions, !.  % Instructions     
+option_start_menu(3).                           % Exit                       
+option_start_menu(1) :- board_menu.             % Start Game          
+option_start_menu(2) :- print_instructions.     % Instructions     
 
 print_start_menu:-  % Prints Start menu
     nl,
@@ -35,10 +35,10 @@ board_menu :-
     option_board_menu(Input),   % Processs option
     Input =:= 4.                % Go Back to other menu
 
-option_board_menu(4) :- !.                  % Back
-option_board_menu(1) :- game_menu(6, 6), !. % 6x6
-option_board_menu(2) :- game_menu(6, 9), !. % 6x9
-option_board_menu(3) :- game_menu(9, 9), !. % 9x9
+option_board_menu(4) .                  % Back
+option_board_menu(1) :- game_menu(6, 6). % 6x6
+option_board_menu(2) :- game_menu(6, 9). % 6x9
+option_board_menu(3) :- game_menu(9, 9). % 9x9
             
 print_board_menu:-  % Prints board menu
     nl,
@@ -61,8 +61,8 @@ game_menu(Rows, Columns) :-
     option_game_menu(Input, Rows, Columns), % Process option
     Input =:= 4.                            % Go Back
 
-option_game_menu(4, _, _) :- !.                                                   % Back 
-option_game_menu(1, Rows, Columns) :- start_game(['player', 'player'], Rows, Columns), !.                 % Starts PvP
+option_game_menu(4, _, _).                                                              % Back 
+option_game_menu(1, Rows, Columns) :- start_game(['player', 'player'], Rows, Columns), !.  % Starts PvP
 option_game_menu(2, Rows, Columns) :- ai_menu('Player VS AI', Rows, Columns), !.           % AI vs Player 
 option_game_menu(3, Rows, Columns) :- ai_menu('AI VS AI', Rows, Columns), !.               % AI vs AI
 
@@ -88,17 +88,17 @@ ai_menu('Player VS AI', Rows, Columns) :-     % AI vs Player
     color_menu(Strat, Rows, Columns).         % Calls color menu
 
 ai_menu('AI VS AI', Rows, Columns) :-
-    print_ai_menu,                                          % Prints AI Menu
+    print_ai_menu,                                % Prints AI Menu
 
     print('Choose strategy for black AI:'), nl,
-    read_input(Input1),                                     % Receives user option
-    option_ai_menu(Input1, Strat1),                         % Sets strategy for black AI
+    read_input(Input1),                           % Receives user option
+    option_ai_menu(Input1, Strat1),               % Sets strategy for black AI
 
     print('Choose strategy for white AI:'), nl,
-    read_input(Input2),                                     % Receives user option
-    option_ai_menu(Input2, Strat2),                         % Sets strategy for white AI
+    read_input(Input2),                           % Receives user option
+    option_ai_menu(Input2, Strat2),               % Sets strategy for white AI
 
-    start_game([Strat1, Strat2], Rows, Columns).            % Starts AI VS AI game with startegys
+    start_game([Strat1, Strat2], Rows, Columns).  % Starts AI VS AI game with startegys
 
 option_ai_menu(1, randomAI).  % Random Strategy
 option_ai_menu(2, smartAI).   % Smart Strategy
@@ -118,13 +118,11 @@ print_ai_menu :-
 
 color_menu(Strat, Rows, Columns) :- 
     print_color_menu,
-    read_input(Input),                                  % Receives user option
-    option_color_menu(Input, Color),                    % Gets color of AI
-    (Color = black -> start_game(['player', Strat], Rows, Columns);
-    start_game([Strat, 'player'], Rows, Columns)).       % Starts Game Player vs AI using Strategy Strat
+    read_input(Input),                % Receives user option
+    option_color_menu(Input, Strat, Rows, Columns).  % Process option
 
-option_color_menu(1, black).   % Random Strategy
-option_color_menu(2, white).   % Smart Strategy
+option_color_menu(1, Strat, Rows, Columns) :- start_game(['player', Strat], Rows, Columns).   % Black (AI Plays first)
+option_color_menu(2, Strat, Rows, Columns) :- start_game([Strat, 'player'], Rows, Columns).   % White
 
 print_color_menu :-
     nl,
@@ -183,7 +181,7 @@ read_input_all(Character, [Character|T]) :-
 
 wait_enter :-
 	write('Press <Any Key> to continue.\n'),
-	get_char(_), !.
+	get_char(_).
 
 
 % Ask play to choose a cell

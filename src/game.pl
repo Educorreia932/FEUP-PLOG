@@ -14,15 +14,7 @@ next_player(b, w).
 
 % Starts game
 
-start_game(Strats, Rows, Columns) :-   % Starts PvP game
-    generate_board(Rows, Columns, GameState),              % Generates board
-    game_loop(b, Strats, GameState, 0, 0).                 % Starts game with black playing first
-
-start_game(Strats, Rows, Columns) :-       % Starts Player vs AI game
-    generate_board(Rows, Columns, GameState),              % Generates board
-    game_loop(b, Strats, GameState, 0, 0).                 % Starts game with black playing first
-
-start_game(Strats, Rows, Columns) :-     % Starts AI vs AI game
+start_game(Strats, Rows, Columns) :-                       % Starts PvP game
     generate_board(Rows, Columns, GameState),              % Generates board
     game_loop(b, Strats, GameState, 0, 0).                 % Starts game with black playing first
 
@@ -37,11 +29,6 @@ winner(BlackValue, WhiteValue, 'Black') :- BlackValue > WhiteValue.
 winner(BlackValue, WhiteValue, 'White') :- BlackValue < WhiteValue.
 winner(BlackValue, WhiteValue, 'Draw') :- BlackValue =:= WhiteValue.
 
-game_loop(_, _, GameState, 1, 1) :-
-    game_over(GameState, Winner),
-    (Winner = 'Draw' -> format('There\'s no winner', Winner);   
-    format('\nThe winner is ~w', Winner)), !.
-
 % Convert player color  to an index
 
 player_index(b, 0).
@@ -50,8 +37,8 @@ player_index(w, 1).
 % Check if player has already finished playing
 
 finished_playing(GameState, NewGameState, _, 0) :-  
-    GameState \== NewGameState, !.                  % Differents GameStates means player can play
-
+    GameState \== NewGameState.                % Differents GameStates means player can play
+    
 finished_playing(GameState, GameState, w, 1).  % White player can't play
 finished_playing(GameState, GameState, b, 1).  % Black player can't play
 
@@ -67,6 +54,11 @@ get_move(Player, GameState, Strat, NewGameState) :-
     sleep(0.5).
 
 % Game loop
+    
+game_loop(_, _, GameState, 1, 1) :-
+    game_over(GameState, Winner),
+    (Winner = 'Draw' -> format('There\'s no winner', Winner);   
+    format('\nThe winner is ~w', Winner)), !.
 
 game_loop(Player, Strats, GameState, _BlackFinished, _WhiteFinished) :-
     display_game(GameState, Player),                     % Display the current state of the game
@@ -79,7 +71,7 @@ game_loop(Player, Strats, GameState, _BlackFinished, _WhiteFinished) :-
     finished_playing(GameState, NewGameState, Player, Finished),
     (Player = b -> game_loop(NextPlayer, Strats, NewGameState, Finished, _WhiteFinished);
      Player = w -> game_loop(NextPlayer, Strats, NewGameState, _BlackFinished, Finished)
-    ), !.
+    ).
 
 % There are no valid moves
 
