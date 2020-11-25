@@ -7,6 +7,8 @@
 :- consult('moves.pl').
 :- consult('utils.pl').
 
+:- dynamic(state/2).
+
 % Defines what color is playing next
 
 next_player(w, b). % black plays after white
@@ -21,7 +23,7 @@ player_index(w, 1).
 
 start_game(Strats, Rows, Columns) :-            % Starts PvP game
     generate_board(Rows, Columns, GameState),   % Generates board
-    game_loop(b, Strats, GameState, 0, 0).      % Starts game with black playing first
+    game_loop(b, Strats, 0, GameState, 0, 0).      % Starts game with black playing first
 
 % Game Over
 
@@ -42,24 +44,22 @@ finished_playing(GameState, NewGameState, _, 0) :-
 finished_playing(GameState, GameState, w, 1).       % White player can't play
 finished_playing(GameState, GameState, b, 1).       % Black player can't play
 
-
 % Game loop
     
-game_loop(_, _, GameState, 1, 1) :-
+game_loop(_, _, _, GameState, 1, 1) :-
     game_over(GameState, Winner),
     (Winner = 'Draw' -> format('There\'s no winner', Winner);   
     format('\nThe winner is ~w', Winner)), !.
 
-game_loop(Player, Strats, GameState, _BlackFinished, _WhiteFinished) :-
+game_loop(Player, Strats, Round, GameState, BlackFinished, WhiteFinished) :-
     display_game(GameState, Player),                     % Display the current state of the game
     player_index(Player, PlayerIndex),                   % Convert current player to an index
     nth0(PlayerIndex, Strats, Strat),                    % Get current strategy
     get_move(Player, GameState, Strat, NewGameState),    % Get next move
     clear_screen,                                        % Clear the screen
     next_player(Player, NextPlayer),                     
-    
     finished_playing(GameState, NewGameState, Player, Finished),
-    (Player = b -> game_loop(NextPlayer, Strats, NewGameState, Finished, _WhiteFinished);
-     Player = w -> game_loop(NextPlayer, Strats, NewGameState, _BlackFinished, Finished)
-    ).
-
+    assert(state(Round, GameState)),
+    NewRound is Round + 1,
+    (Player = b -> game_loop(NextPlayer, Strats, NewRound, NewGameState, Finished, WhiteFinished);
+     Player = w -> game_loop(NextPlayer, Strats, NewRound, NewGameState, BlackFinished, Finished)).

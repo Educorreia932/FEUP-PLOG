@@ -1,1 +1,0 @@
-sicstus < input.txt

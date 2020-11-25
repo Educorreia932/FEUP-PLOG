@@ -29,7 +29,6 @@ has_pieces_between(Board, I0, J, I1, J) :-    % Same column
     get_cell(Board, I, J, Stack),
     \+ is_empty(Stack).
 
-
 % All possible and valid moves
 
 valid_moves(BoardIn, Player, ListOfMoves) :- % Gets all possivle moves
@@ -53,7 +52,6 @@ valid_move(Player, BoardIn, BoardOut) :-
     \+ has_pieces_between(BoardIn, I0, J0, I1, J1),
     move(BoardIn, [I0, J0, I1, J1], BoardOut). 
 
-
 % Choose move
 
 choose_move(GameState, Player, _, GameState) :-
@@ -71,7 +69,6 @@ choose_move(GameState, Player, smartAI, Move) :-     % Smart AI Strategy
     max_list(MovesValues, _, Index),                 % Get the highest value move
     nth0(Index, ListOfMoves, Move).                  % Choose the highest value move
 
-
 % Get move
 
 get_move(Player, GameState, 'player', NewGameState) :-
@@ -82,7 +79,6 @@ get_move(Player, GameState, Strat, NewGameState) :-     % AI calculates move
     choose_move(GameState, Player, Strat, NewGameState),
     sleep(0.5).
 
-
 % Calculate value of move
 
 value(GameState, Player, Value) :-
@@ -91,15 +87,13 @@ value(GameState, Player, Value) :-
     green_pieces(PlayerStacks, GreenPieces),        % Count the number of green pieces in each stack
     sum(GreenPieces, Value).                        % Get the total number of green pieces
 
-
 % Map values of each move
 
 moves_values([], _, []).                    % Stop Recursion
 
 moves_values([C|R], Player, [Value|CR]) :-
     value(C, Player, Value),                % Calculates value of GameState
-    moves_values(R, Player, CR).            % Reursion using tails of lists
-
+    moves_values(R, Player, CR).            % Recursion using tails of lists
 
 % Retrieve stacks controlled by player
 
