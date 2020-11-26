@@ -1,7 +1,6 @@
 /* 5. a) */
 
-membro(X, [H, T]) :-
-    X = H.
+membro(X, [X, T]).
 
 membro(X, [H, T]) :-
     membro(X, T).
