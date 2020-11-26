@@ -25,12 +25,6 @@ create([], []).
 create([H|T], [[H]|T2]) :-
     create(T, T2).
 
-% Takes the first N elements of a list
-
-take(L, N, L1) :- 
-    length(L1, N), 
-    append(L1, _, L).
-
 % Removes the first N elements of a list
 
 remove_n(List, N, ShorterList) :-
@@ -59,14 +53,6 @@ exclusive_between(Low, High, Value) :-
     L is Low + 1,
     H is High - 1,
     between(L, H, Value).
-
-% Sum all the elements of a list
-
-sum([], 0).
-
-sum([H|T], Sum) :-
-   sum(T, Rest),
-   Sum is H + Rest.
 
 % Flattens a list by one-level
 

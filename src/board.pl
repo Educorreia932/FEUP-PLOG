@@ -31,8 +31,8 @@ pieces(W, G, B, Pieces) :-
 
 % Returns a shuffled list from a list of pieces
 
-shuffle_board(Shuffled, Collumns, Rows) :-
-    Size = Collumns * Rows,                 % Calculates size of board
+shuffle_board(Shuffled, Columns, Rows) :-
+    Size = Columns * Rows,                 % Calculates size of board
     W is div(Size, 4),                      % Calculates number of white pieces
     B = W,                                  % Number of black pieces is the same as white pieces
     G = Size - (W + B),                     % Calculates number of green pieces
@@ -41,26 +41,26 @@ shuffle_board(Shuffled, Collumns, Rows) :-
 
 % Fills a row with pieces
 
-fill_row(Pieces, Collumns, FilledRow) :-
-    take(Pieces, Collumns, Row),
+fill_row(Pieces, Columns, FilledRow) :-
+    prefix_length(Pieces, Row, Columns),
     create(Row, FilledRow).
 
 % Fills board row by row using a list of pieces
 
 fill_board(_, _, 0, _).
 
-fill_board(Pieces, Collumns, Rows, Board) :-
-    fill_row(Pieces, Collumns, FilledRow),
-    remove_n(Pieces, Collumns, P),              
+fill_board(Pieces, Columns, Rows, Board) :-
+    fill_row(Pieces, Columns, FilledRow),
+    remove_n(Pieces, Columns, P),              
     append(FilledBoard, [FilledRow], Board),
     R is Rows - 1,
-    fill_board(P, Collumns, R, FilledBoard).
+    fill_board(P, Columns, R, FilledBoard).
 
 % Generates random game board, filling it with pieces
 
-generate_board(Collumns, Rows, Board) :-
-    shuffle_board(Shuffled, Collumns, Rows),            % Shuffles all pieces from the list
-    fill_board(Shuffled, Collumns, Rows, Board).       % Fills board with the pieces from list
+generate_board(Columns, Rows, Board) :-
+    shuffle_board(Shuffled, Columns, Rows),            % Shuffles all pieces from the list
+    fill_board(Shuffled, Columns, Rows, Board).       % Fills board with the pieces from list
 
 % Returns the board's width and height
 

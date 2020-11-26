@@ -31,7 +31,7 @@ has_pieces_between(Board, I0, J, I1, J) :-    % Same column
 
 % All possible and valid moves
 
-valid_moves(BoardIn, Player, ListOfMoves) :- % Gets all possivle moves
+valid_moves(BoardIn, Player, ListOfMoves) :- % Gets all possible moves
     findall(BoardOut, valid_move(Player, BoardIn, BoardOut), ListOfMoves).
 
 valid_move(Player, BoardIn, BoardOut) :-
@@ -50,7 +50,7 @@ valid_move(Player, BoardIn, BoardOut) :-
     \+ is_same_cell(I0, J0, I1, J1),                      % Start and cell coordinates are different
     (I0 == I1; J0 == J1),
     \+ has_pieces_between(BoardIn, I0, J0, I1, J1),
-    move(BoardIn, [I0, J0, I1, J1], BoardOut). 
+    move(BoardIn, [I0, J0, I1, J1], BoardOut).            % Make move
 
 % Choose move
 
@@ -85,7 +85,7 @@ value(GameState, Player, Value) :-
     flatten(GameState, AllStacks),                  % Retrieve list of all stacks
     get_stacks(AllStacks, Player, PlayerStacks),    % Retrieve player's stacks
     green_pieces(PlayerStacks, GreenPieces),        % Count the number of green pieces in each stack
-    sum(GreenPieces, Value).                        % Get the total number of green pieces
+    sumlist(GreenPieces, Value).                        % Get the total number of green pieces
 
 % Map values of each move
 
