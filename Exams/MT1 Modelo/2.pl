@@ -20,4 +20,4 @@ nth1(1, [H|_], H).
 nth1(Index, [H | List], Elem) :-
   Index > 1,
   NextIndex is Index - 1,
-  nth0(NextIndex, List, Elem).
+  nth1(NextIndex, List, Elem).
