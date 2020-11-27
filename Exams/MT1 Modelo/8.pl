@@ -10,5 +10,6 @@ eligibleOutcome(Id, Perf, TT) :-
 
 nextPhase(N, Participants) :-
     setof(TT-Id-Perf, (eligibleOutcome(Id, Perf, TT)), EligibleParticipants),
-    reverse(EligibleParticipants, FullParticipants),   
+    keysort(EligibleParticipants, SortedParticipants),   
+    reverse(SortedParticipants, FullParticipants),   
     prefix_length(FullParticipants, Participants, N).
