@@ -35,7 +35,7 @@ board_menu :-
     option_board_menu(Input),   % Processs option
     Input =:= 4.                % Go Back to other menu
 
-option_board_menu(4) .                  % Back
+option_board_menu(4) .                   % Back
 option_board_menu(1) :- game_menu(6, 6). % 6x6
 option_board_menu(2) :- game_menu(6, 9). % 6x9
 option_board_menu(3) :- game_menu(9, 9). % 9x9
@@ -176,13 +176,6 @@ read_input_all(13, []) :- !.
 read_input_all(Character, [Character|T]) :-
     get_code(C),
     read_input_all(C, T), !.
-
-% Waits for user to press any key
-
-wait_enter :-
-	write('Press <Any Key> to continue.\n'),
-	get_char(_).
-
 
 % Ask play to choose a cell
 
