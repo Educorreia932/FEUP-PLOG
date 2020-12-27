@@ -1,0 +1,4 @@
+maquinista(Maquinista) :-
+    Detroit
+    
+.
