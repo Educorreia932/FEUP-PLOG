@@ -15,26 +15,39 @@ square(Rows, Columns, Solution) :-
     % Restrictions  
 
     % Rows Restictions
-    % por cada row aplica restrictions
-
+    rowRestrictions([H|T], Index, Size, Square),
     % Column Restictions
-    % por cada coluna aplica restrictions
-    columnRestrictions(NRows, NColumns, Square),
+    collumnRestrictions([H|T], Index, Size, Square),
 
     % Solution search
     labeling([], List).
 
-rowRestrictions(0, _, _).
+rowRestrictions([], _, _, _).
 
-rowRestrictions(NRows, NColumns, Square) :-
-    N is NRows - 1,
-    rowRestrictions(N, NColumns, Square).
+rowRestrictions([H|T], Index, Size, Square) :-
+    getRow(Index, 0, Size, Square, Row),
+    sumlist(Row, Filled),
+    Filled #= H,
+    I is Index + 1,
+    rowRestrictions(T, I, Size, Square).
 
-columnRestrictions(0, _, _).
+collumnRestrictions([], _, _, _).
 
-columnRestrictions(NRows, NColumns, Square) :-
-    N is NColumns - 1,
-    columnRestrictions(N, NColumns, Square).
+collumnRestrictions([H|T], Index, Size, Square) :-
+    getColumn(Index, 0, Size, Square, Column),
+    sumlist(Column, Filled),
+    Filled #= H,
+    I is Index + 1,
+    collumnRestrictions(T, I, Size, Square).
+
+getRow(Index, N, Size, Square, Row) :-
+    N >= Index * Size,
+    prefix_length(Square, Row, Size). 
+
+getRow(Index, N, Size, [_|T], Row) :-
+    N < Index * Size,
+    N1 is N + 1,
+    getRow(Index, N1, Size, T, Row). 
 
 getColumn(_, N, Size, _, []) :-
     Aux is Size ** 2,
@@ -44,6 +57,5 @@ getColumn(Index, N, Size, Square, [H|T]) :-
     I is Index + N,  
     N1 is N + Size,
     nth0(I, Square, H),
-    print(H),      
     getColumn(Index, N1, Size, Square, T).
         
