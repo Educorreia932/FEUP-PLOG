@@ -14,7 +14,8 @@ square(Rows, Columns, Vars) :-
     collumnRestrictions(Columns, 0, Size, Vars),
 
     % Solution search
-    labeling([], Vars).
+    labeling([], Vars),
+    printSquare(0, Size, Vars).
 
 rowRestrictions([], _, _, _).
 
@@ -56,3 +57,11 @@ build(_, 0, []).        % End of recursion
 build(X, N, [X|T]) :-   % Adds N pieces to list
     N1 is N - 1,
     build(X, N1, T).    % Recursion
+
+printSquare(N, N, _).
+
+printSquare(Index, Size, Square) :-
+    getRow(Index, 0, Size, Square, Row),
+    print(Row), print('\n'),
+    I is Index + 1,
+    printSquare(I, Size, Square).
