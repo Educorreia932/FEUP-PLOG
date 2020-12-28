@@ -3,7 +3,6 @@
 
 square(Rows, Columns, Vars) :-
     % Domain and variables definition
-
     length(Rows, Size),                         % Size of square
     Nvars is Size * Size,                       % Number of vars is the square's area
     length(Vars, Nvars),                        % Get list of vars
@@ -15,7 +14,7 @@ square(Rows, Columns, Vars) :-
 
     % Solution search
     labeling([], Vars),
-    printSquare(0, Size, Vars).
+    printSquare(Rows, Columns, 0, Size, Vars).
 
 rowRestrictions([], _, _, _).
 
@@ -58,10 +57,28 @@ build(X, N, [X|T]) :-   % Adds N pieces to list
     N1 is N - 1,
     build(X, N1, T).    % Recursion
 
-printSquare(N, N, _).
+printSquare(_, Columns, N, N, _) :-
+    printColumns(Columns).
 
-printSquare(Index, Size, Square) :-
+printSquare([H|T], Columns, Index, Size, Square) :-
     getRow(Index, 0, Size, Square, Row),
-    print(Row), print('\n'),
+    printRow(Row, H),
     I is Index + 1,
-    printSquare(I, Size, Square).
+    printSquare(T, Columns, I, Size, Square).
+
+printRow([], N) :-
+    format(' ~w\n', N).
+
+printRow([0|T], N) :-
+    put_code(9633),
+    printRow(T, N).
+
+printRow([1|T], N) :-
+    put_code(9632),
+    printRow(T, N).
+
+printColumns([]).
+
+printColumns([H|T]) :-
+    print(H),
+    printColumns(T).
