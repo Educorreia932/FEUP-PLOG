@@ -2,6 +2,7 @@
 :- use_module(library(lists)).
 
 :- include('display.pl').
+:- include('utils.pl').
 
 solve(Blocked, Rows, Columns, Square) :-
     % Domain and variables definition
@@ -18,17 +19,6 @@ solve(Blocked, Rows, Columns, Square) :-
     % Solution search
     labeling([], Vars),
     unflatten(Vars, Size, Square).
-
-trim(L, N, S) :-       % Trim N elements from a list
-  length(P, N),        % Generate an unbound prefix list of the desired length
-  append(P, S, L).     % Get the desired suffix.
-
-unflatten([], _, []).
-
-unflatten(Vars, Size, [H|T]) :-
-    prefix_length(Vars, H, Size),
-    trim(Vars, Size, VarsOut), 
-    unflatten(VarsOut, Size, T).
 
 blocked_restrictions([], _).
 blocked_restrictions([H|T], Vars):-
@@ -52,32 +42,7 @@ collumn_restrictions([H|T], Index, Size, Square) :-
     I is Index + 1,
     collumn_restrictions(T, I, Size, Square).
 
-get_row(Index, N, Size, Square, Row) :-
-    N >= Index * Size,
-    prefix_length(Square, Row, Size). 
-
-get_row(Index, N, Size, [_|T], Row) :-
-    N < Index * Size,
-    N1 is N + 1,
-    get_row(Index, N1, Size, T, Row). 
-
-get_column(_, N, Size, _, []) :-
-    Aux is Size ** 2,
-    N >= Aux.
-
-get_column(Index, N, Size, Square, [H|T]) :-
-    I is Index + N,  
-    N1 is N + Size,
-    nth0(I, Square, H),
-    get_column(Index, N1, Size, Square, T).
-        
-build(_, 0, []).        % End of recursion
-
-build(X, N, [X|T]) :-   % Adds N pieces to list
-    N1 is N - 1,
-    build(X, N1, T).    % Recursion
-
-square_restrictions(Size, StartsX, StartsY, SquareSizes) :-
+generate_squares(Size, StartsX, StartsY, SquareSizes) :-
     MaxNumSquares is Size * Size,
 
     NumSquares #> 1,
@@ -93,7 +58,7 @@ square_restrictions(Size, StartsX, StartsY, SquareSizes) :-
     domain(StartsY, 0, S),
     domain(SquareSizes, 1, Size),
 
-    generate_squares(Size, StartsX, StartsY, SquareSizes, Squares),
+    construct_squares(Size, StartsX, StartsY, SquareSizes, Squares),
     disjoint2(Squares, [margin(0, 0, 1, 1)]),
 
     append(StartsX, StartsY, Starts),
@@ -101,10 +66,10 @@ square_restrictions(Size, StartsX, StartsY, SquareSizes) :-
     append(StartsSizes, [NumSquares], Vars),
     labeling([], Vars).
 
-generate_squares(_, [], [], [], []).
+construct_squares(_, [], [], [], []).
 
-generate_squares(Size, [StartX|T1], [StartY|T2], [SquareSize|T3], [square(StartX, SquareSize, StartY, SquareSize)|T4]) :-
+construct_squares(Size, [StartX|T1], [StartY|T2], [SquareSize|T3], [square(StartX, SquareSize, StartY, SquareSize)|T4]) :-
     sum([StartX, SquareSize], #=<, Size),
     sum([StartY, SquareSize], #=<, Size),
-    generate_squares(Size, T1, T2, T3, T4).
+    construct_squares(Size, T1, T2, T3, T4).
     
