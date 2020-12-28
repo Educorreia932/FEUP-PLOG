@@ -1,5 +1,4 @@
 :- use_module(library(clpfd)).
-:- use_module(library(lists)).
 
 :- include('display.pl').
 :- include('utils.pl').

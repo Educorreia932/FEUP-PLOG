@@ -1,3 +1,7 @@
+:- use_module(library(between)).
+:- use_module(library(lists)).
+
+
 get_row(Index, N, Size, Square, Row) :-
     N >= Index * Size,
     prefix_length(Square, Row, Size). 
@@ -41,7 +45,8 @@ squares_indexes([], [], [], [], _).
 
 squares_indexes([StartX|T1], [StartY|T2], [SquareSize|T3], [Indexes|T4], Size) :-
     EndY is StartY + SquareSize,
-    square_indexes(StartX, StartY, EndY, SquareSize, Indexes, Size),
+    square_indexes(StartX, StartY, EndY, SquareSize, IndexesList, Size),
+    flatten(IndexesList, Indexes),
     squares_indexes(T1, T2, T3, T4, Size).
 
 % Get the indexes that correspond to a single square
@@ -49,8 +54,21 @@ squares_indexes([StartX|T1], [StartY|T2], [SquareSize|T3], [Indexes|T4], Size) :
 square_indexes(_, Y, Y, _, [], _).
 
 square_indexes(StartX, StartY, EndY, SquareSize, [Indexes|T], Size) :-
-    LowerBound is StartY * Size + StartX, 
-    HigherBound is LowerBound + SquareSize,
+    LowerBound is StartY * Size + StartX,       
+    HigherBound is LowerBound + SquareSize - 1,
     findall(Index, between(LowerBound, HigherBound, Index), Indexes),
     Y is StartY + 1,
     square_indexes(StartX, Y, EndY, SquareSize, T, Size).
+
+% Flattens a list by one-level
+
+flatten([], []).
+
+flatten([A|B],L) :- 
+    is_list(A),
+    flatten(B,B1), 
+    !,
+    append(A,B1,L).
+
+flatten([A|B], [A|B1]) :- 
+    flatten(B, B1).
