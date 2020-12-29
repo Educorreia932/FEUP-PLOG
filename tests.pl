@@ -1,5 +1,6 @@
 :- include('solver.pl').
 :- include('puzzles.pl').
+:- include('display.pl').
 
 % ==================================================
 % Testing Purposes
@@ -21,7 +22,7 @@ test_puzzle1 :-
         [0, 1, 1, 1, 0, 0, 0, 0, 0, 0],
         [0, 1, 1, 1, 0, 0, 0, 0, 1, 0]
     ],
-    Solution == Square.
+    print_square(Rows, Columns, Square).
 
 test_puzzle2 :-
     puzzle2(Blocked, Rows, Columns),

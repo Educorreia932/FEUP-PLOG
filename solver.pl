@@ -5,70 +5,78 @@
 
 solve(Blocked, Rows, Columns, Square) :-
     % Domain and variables definition
-    length(Rows, Size),                         % Size of square
-    Nvars is Size * Size,                       % Number of vars is the square's area
-    length(Vars, Nvars),                        % Get list of vars
-    domain(Vars, 0, 1),                         % 0 - empty, 1 - full
+    length(Rows, Size),                          % Size of square
+    Nvars is Size * Size,                        % Number of Cells is the square's area
+    length(Cells, Nvars),                        % Get list of Cells
+    domain(Cells, 0, 1),                         % 0 - empty, 1 - full
 
     % Restrictions  
-    blocked_restrictions(Blocked, Vars),
-    row_restrictions(Rows, 0, Size, Vars),
-    collumn_restrictions(Columns, 0, Size, Vars),
+    % blocked_restrictions(Blocked, Cells),               % Restrict cells marked with X
+    row_restrictions(Rows, 0, Size, Cells),             % Restrict Rows
+    column_restrictions(Columns, 0, Size, Cells),       % Restrict Columns
+
+    generate_squares(Size, StartsX, StartsY, SquareSizes, NumSquares),     % Generates non-overlaping & non-touching squares 
+    squares_restrictions(StartsX, StartsY, SquareSizes, Size, Cells),
 
     % Solution search
+    VarsList = [Cells, StartsX, StartsY, SquareSizes, NumSquares],
+    flatten(VarsList, Vars),
     labeling([], Vars),
-    unflatten(Vars, Size, Square).
+    unflatten(Cells, Size, Square).
 
-blocked_restrictions([], _).
-blocked_restrictions([H|T], Vars):-
-    nth0(H, Vars, Elem),
-    Elem #= 0,
-    blocked_restrictions(T, Vars).
+% Restrict cells marked with X
 
-row_restrictions([], _, _, _).
+blocked_restrictions([], _).                % Stop recursion
+
+blocked_restrictions([Index|T], Cells):-
+    element(Index, Cells, 0),               % cant paint X cells  
+    blocked_restrictions(T, Cells).         % recursion
+
+% Restrict number of filled cells in each row
+
+row_restrictions([], _, _, _).                  % Stop recursion
 
 row_restrictions([H|T], Index, Size, Square) :-
-    get_row(Index, 0, Size, Square, Row),
-    sum(Row, #=, H),
-    I is Index + 1,
-    row_restrictions(T, I, Size, Square).
+    get_row(Index, 0, Size, Square, Row),       % Get Row
+    sum(Row, #=, H),                            % Constraint sum of row
+    I is Index + 1,                             % Increment Line index
+    row_restrictions(T, I, Size, Square).       % Recursion
 
-collumn_restrictions([], _, _, _).
+% Restrict number of filled cells in each column
 
-collumn_restrictions([H|T], Index, Size, Square) :-
-    get_column(Index, 0, Size, Square, Column),
-    sum(Column, #=, H),
-    I is Index + 1,
-    collumn_restrictions(T, I, Size, Square).
+column_restrictions([], _, _, _).                   % Stop recursion
 
-generate_squares(Size, StartsX, StartsY, SquareSizes) :-
-    MaxNumSquares is Size * Size,
+column_restrictions([H|T], Index, Size, Square) :-
+    get_column(Index, 0, Size, Square, Column),     % Get column
+    sum(Column, #=, H),                             % Constraint sum of column
+    I is Index + 1,                                 % Increment Column Index
+    column_restrictions(T, I, Size, Square).        % Recursion
 
-    NumSquares #> 1,
-    NumSquares #< MaxNumSquares,
+% Restrict all filled cells to be composed of squares
 
-    length(StartsX, NumSquares),
-    length(StartsY, NumSquares),
-    length(SquareSizes, NumSquares),
+% Restrictions for all squares
 
-    S is Size - 1,
+squares_restrictions([], [], [], _, _).
 
-    domain(StartsX, 0, S),
-    domain(StartsY, 0, S),
-    domain(SquareSizes, 1, Size),
+squares_restrictions([StartX|T1], [StartY|T2], [SquareSize|T3], Size, Cells) :-
+    square_restrictions(StartX, StartY, SquareSize, Size, Cells, SquareSize),
+    squares_restrictions(T1, T2, T3, Size, Cells).
 
-    construct_squares(Size, StartsX, StartsY, SquareSizes, Squares),
-    disjoint2(Squares, [margin(0, 0, 1, 1)]),
+% Restrictions for a single square
 
-    append(StartsX, StartsY, Starts),
-    append(Starts, SquareSizes, StartsSizes),
-    append(StartsSizes, [NumSquares], Vars),
-    labeling([], Vars).
+square_restrictions(_, _, _, _, _, 0).
 
-construct_squares(_, [], [], [], []).
+square_restrictions(X, Y, SquareSize, Size, Cells, N) :-
+    square_line_restrictions(X, Y, SquareSize, Size, Cells),
+    Y1 is Y + 1,
+    N1 is N - 1,
+    square_restrictions(X, Y1, SquareSize, Size, Cells, N1).
 
-construct_squares(Size, [StartX|T1], [StartY|T2], [SquareSize|T3], [square(StartX, SquareSize, StartY, SquareSize)|T4]) :-
-    sum([StartX, SquareSize], #=<, Size),
-    sum([StartY, SquareSize], #=<, Size),
-    construct_squares(Size, T1, T2, T3, T4).
+% Restrictions for a single square line
+
+square_line_restrictions(ColumnIndex, RowIndex, SquareSize, Size, Cells) :-
+    get_row(RowIndex, 0, Size, Cells, Row),
+    trim(Row, ColumnIndex, Line),
+    prefix_length(Line, SquareLine, SquareSize),
+    sum(SquareLine, #=, SquareSize).
     
