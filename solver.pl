@@ -12,8 +12,8 @@ solve(Blocked, Rows, Columns, Square) :-
 
     % Restrictions  
     % blocked_restrictions(Blocked, Cells),               % Restrict cells marked with X
-    row_restrictions(Rows, 0, Size, Cells),             % Restrict Rows
-    column_restrictions(Columns, 0, Size, Cells),       % Restrict Columns
+    % column_restrictions(Columns, 0, Size, Cells),       % Restrict Columns
+    % row_restrictions(Rows, 0, Size, Cells),             % Restrict Rows
 
     generate_squares(Size, StartsX, StartsY, SquareSizes, NumSquares),     % Generates non-overlaping & non-touching squares 
     squares_restrictions(StartsX, StartsY, SquareSizes, Size, Cells),
@@ -22,6 +22,11 @@ solve(Blocked, Rows, Columns, Square) :-
     VarsList = [Cells, StartsX, StartsY, SquareSizes, NumSquares],
     flatten(VarsList, Vars),
     labeling([], Vars),
+
+    print(StartsX), nl,
+    print(StartsY), nl,
+    print(SquareSizes), nl,
+
     unflatten(Cells, Size, Square).
 
 % Restrict cells marked with X
