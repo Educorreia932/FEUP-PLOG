@@ -1,87 +1,71 @@
 :- use_module(library(clpfd)).
 
-:- include('display.pl').
 :- include('utils.pl').
 
-solve(Blocked, Rows, Columns, Square) :-
+solve(Blocked, Rows, Columns, Vars) :-
     % Domain and variables definition
-    length(Rows, Size),                          % Size of square
-    Nvars is Size * Size,                        % Number of Cells is the square's area
-    length(Cells, Nvars),                        % Get list of Cells
-    domain(Cells, 0, 1),                         % 0 - empty, 1 - full
 
-    % Restrictions  
-    % blocked_restrictions(Blocked, Cells),               % Restrict cells marked with X
-    % column_restrictions(Columns, 0, Size, Cells),       % Restrict Columns
-    % row_restrictions(Rows, 0, Size, Cells),             % Restrict Rows
+    length(Rows, Size),   
 
-    generate_squares(Size, StartsX, StartsY, SquareSizes, NumSquares),     % Generates non-overlaping & non-touching squares 
-    squares_restrictions(StartsX, StartsY, SquareSizes, Size, Cells),
+    MaxNumSquares is Size * Size,                
+    NumSquares #>= 0,                               
+    NumSquares #< MaxNumSquares,      
+
+    length(StartsX, NumSquares),                    
+    length(StartsY, NumSquares),                   
+    length(SquareSizes, NumSquares),                
+
+    S is Size - 1,           
+                           
+    domain(StartsX, 0, S),                         
+    domain(StartsY, 0, S),                          
+    domain(SquareSizes, 1, Size),                  
+
+    construct_squares(Size, StartsX, StartsY, SquareSizes, Squares), 
+
+    % Constraints
+
+    disjoint2(Squares, [margin(0, 0, 1, 1)]),
+    lines_constraints(0, Rows, StartsX, SquareSizes),
+    lines_constraints(0, Columns, StartsY, SquareSizes),
 
     % Solution search
-    VarsList = [Cells, StartsX, StartsY, SquareSizes, NumSquares],
+
+    VarsList = [NumSquares, StartsX, StartsY, SquareSizes],
     flatten(VarsList, Vars),
-    labeling([], Vars),
+    labeling([], Vars).
 
-    print(StartsX), nl,
-    print(StartsY), nl,
-    print(SquareSizes), nl,
+construct_squares(_, [], [], [], []). 
 
-    unflatten(Cells, Size, Square).
+construct_squares(Size, [StartX|T1], [StartY|T2], [SquareSize|T3], [square(StartX, SquareSize, StartY, SquareSize)|T4]) :-
+    StartX + SquareSize #=< Size,              
+    StartY + SquareSize #=< Size,
+    construct_squares(Size, T1, T2, T3, T4).  
 
-% Restrict cells marked with X
+% Rows and columns NumFilledCells cells constraints
 
-blocked_restrictions([], _).                % Stop recursion
+lines_constraints(_, [], _, _).
 
-blocked_restrictions([Index|T], Cells):-
-    element(Index, Cells, 0),               % cant paint X cells  
-    blocked_restrictions(T, Cells).         % recursion
+lines_constraints(Index, [NumFilledCells|T], Starts, SquareSizes) :-
+    line_constraints(Index, NumFilledCells, Starts, SquareSizes),
+    I is Index + 1,
+    lines_constraints(I, T, Starts, SquareSizes).
 
-% Restrict number of filled cells in each row
-
-row_restrictions([], _, _, _).                  % Stop recursion
-
-row_restrictions([H|T], Index, Size, Square) :-
-    get_row(Index, 0, Size, Square, Row),       % Get Row
-    sum(Row, #=, H),                            % Constraint sum of row
-    I is Index + 1,                             % Increment Line index
-    row_restrictions(T, I, Size, Square).       % Recursion
-
-% Restrict number of filled cells in each column
-
-column_restrictions([], _, _, _).                   % Stop recursion
-
-column_restrictions([H|T], Index, Size, Square) :-
-    get_column(Index, 0, Size, Square, Column),     % Get column
-    sum(Column, #=, H),                             % Constraint sum of column
-    I is Index + 1,                                 % Increment Column Index
-    column_restrictions(T, I, Size, Square).        % Recursion
-
-% Restrict all filled cells to be composed of squares
-
-% Restrictions for all squares
-
-squares_restrictions([], [], [], _, _).
-
-squares_restrictions([StartX|T1], [StartY|T2], [SquareSize|T3], Size, Cells) :-
-    square_restrictions(StartX, StartY, SquareSize, Size, Cells, SquareSize),
-    squares_restrictions(T1, T2, T3, Size, Cells).
-
-% Restrictions for a single square
-
-square_restrictions(_, _, _, _, _, 0).
-
-square_restrictions(X, Y, SquareSize, Size, Cells, N) :-
-    square_line_restrictions(X, Y, SquareSize, Size, Cells),
-    Y1 is Y + 1,
-    N1 is N - 1,
-    square_restrictions(X, Y1, SquareSize, Size, Cells, N1).
-
-% Restrictions for a single square line
-
-square_line_restrictions(ColumnIndex, RowIndex, SquareSize, Size, Cells) :-
-    get_row(RowIndex, 0, Size, Cells, Row),
-    trim(Row, ColumnIndex, Line),
-    prefix_length(Line, SquareLine, SquareSize),
-    sum(SquareLine, #=, SquareSize).
+line_constraints(Index, NumFilledCells, Starts, SquareSizes) :-
+    findall(
+        SquareSize,
+        (
+            element(N, Starts, Start),  
+            element(N, SquareSizes, SquareSize),  
+            intersect(Index, Start, SquareSize)
+        ),
+        Lines),
+    sum(Lines, #=, NumFilledCells).
     
+% Check if a square intersects a row or column
+
+intersect(Index, Start, SquareSize) :-
+    Start #=< Index,
+    Index #=< Start + SquareSize.
+
+

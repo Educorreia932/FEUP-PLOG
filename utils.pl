@@ -54,24 +54,24 @@ generate_squares(Size, StartsX, StartsY, SquareSizes, NumSquares) :-
     %MaxNumSquares is Size * Size,                   % Max number squares painted
     %NumSquares #>= 0,                               % Number squares must be greater than or equal to 0
     %NumSquares #< MaxNumSquares,                    % Number squares must be less than max
-    
     NumSquares #= 13,
 
     length(StartsX, NumSquares),                    % Generate list of x coords
     length(StartsY, NumSquares),                    % Generate list of y coords
     length(SquareSizes, NumSquares),                % Generate list of square sizes
 
-    S is Size - 1,                                  
+    S is Size - 1,           
+                           
     domain(StartsX, 0, S),                          % Constraint X
     domain(StartsY, 0, S),                          % Constraint Y
     domain(SquareSizes, 1, Size),                   % Constraint Size
 
     construct_squares(Size, StartsX, StartsY, SquareSizes, Squares),    % Creates list of squares
-    disjoint2(Squares, [margin(0, 0, 1, 1)]).                           % Gives non-touvhing and non-overlapping squares
+    disjoint2(Squares, [margin(0, 0, 1, 1)]).                           % Gives non-touching and non-overlapping squares
 
 construct_squares(_, [], [], [], []).   % End of recursion
 
 construct_squares(Size, [StartX|T1], [StartY|T2], [SquareSize|T3], [square(StartX, SquareSize, StartY, SquareSize)|T4]) :-
     StartX + SquareSize #=< Size,               % Constraint Size Square
     StartY + SquareSize #=< Size,               % Constraint Size Square
-    construct_squares(Size, T1, T2, T3, T4).    % recursion
+    construct_squares(Size, T1, T2, T3, T4).    % Recursion

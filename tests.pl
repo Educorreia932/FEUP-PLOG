@@ -22,7 +22,7 @@ test_puzzle1 :-
         [0, 1, 1, 1, 0, 0, 0, 0, 0, 0],
         [0, 1, 1, 1, 0, 0, 0, 0, 1, 0]
     ],
-    print_square(Rows, Columns, Square).
+    print(Square).
 
 test_puzzle2 :-
     puzzle2(Blocked, Rows, Columns),
