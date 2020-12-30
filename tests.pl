@@ -9,7 +9,7 @@
 
 test_puzzle1 :-
     puzzle1(Blocked, Rows, Columns),
-    solve(Blocked, Rows, Columns, Square),
+    solve(Rows, Columns, Square),
     Solution = [
         [1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
         [0, 0, 1, 0, 0, 0, 0, 1, 0, 0],
@@ -22,7 +22,7 @@ test_puzzle1 :-
         [0, 1, 1, 1, 0, 0, 0, 0, 0, 0],
         [0, 1, 1, 1, 0, 0, 0, 0, 1, 0]
     ],
-    print(Square).
+    print_square(Rows, Columns, Square), nl.
 
 test_puzzle2 :-
     puzzle2(Blocked, Rows, Columns),
