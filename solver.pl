@@ -91,4 +91,4 @@ square_lines_constraints(I, J, Rows, IsSquare) :-
     get_cell(BottomI, J, Rows, BottomCell),
     get_cell(I, RightJ, Rows, RightCell),
     % Verificar interior
-    ((BottomI - I #= RightJ - J) #/\ (BottomI - I #>= 0) #/\ (RightJ - J #>= 0) ) #<=> IsSquare.
+    ((BottomI - I #= RightJ - J) #/\ (BottomI - I #>= 0) #/\ (RightJ - J #>= 0) #/\ (BottomCell #= RightCell)) #<=> IsSquare.
