@@ -13,7 +13,7 @@ solve(RowsNumbers, ColumnsNumbers, Rows) :-
     transpose(Rows, Columns),
     line_constraints(RowsNumbers, Rows),
     line_constraints(ColumnsNumbers, Columns),
-    square_constraints(0, 0, Rows, Size),
+    find_square(0, 0, Rows, Size),
 
     % Solution search
     
@@ -41,13 +41,13 @@ line_constraints([FilledCells|T1], [GridLine|T2]) :-
 
 % Square constraints
 
-square_constraints(Size, _, _, Size).
+find_square(Size, _, _, Size).
 
-square_constraints(I, size, _, Size) :-        % Next row
+find_square(I, size, _, Size) :-        % Next row
     NewI is I + 1,  
-    square_constraints(NewI, 0, _, Size).
+    find_square(NewI, 0, _, Size).
 
-square_constraints(I, J, Rows, _) :-
+find_square(I, J, Rows, _) :-
     get_cell(I, J, Rows, Cell),                                      
 
     Cell #= 1 #<=> IsFilled,                   % If cell is filled  
@@ -64,35 +64,31 @@ square_constraints(I, J, Rows, _) :-
     get_cell(I, LeftJ, Rows, LeftCell),
     LeftCell #= 0 #<=> IsLeftBlank,
 
-    (IsFilled #/\ IsTopBlank #/\ IsLeftBlank) #<=> IsSquare,   % Is top left corner of a cell
+    % Upper left cell
+    
+    get_cell(TopI, LeftJ, Rows, TopLeftCell),
+    UpperLeftCell #= 0 #<=> IsTopLeftBlank,
 
-    is_square_constraint(I, J, Rows, _, IsSquare).             % Apply square constraints
+    (IsFilled #/\ IsTopBlank #/\ IsLeftBlank #/\ IsTopLeftBlank) #<=> IsSquare, % Is top left corner of a cell
+    square_constraints(I, J, Rows, SquareSize),
+    SquareSize #>= 0 #<=> IsSquare.   
 
-is_square_constraint(_, _, _, _, 0) :- fail.                   % Do not apply constraints if it isn't a square's top left corner cell
+square_constraints(_, J, Rows, _) :-
+    length(Rows, Length),   
+    J == Length.          
 
-is_square_constraint(I, J, Rows, LineSize, 1) :-
-    transpose(Rows, Columns),
-    nth0(I, Rows, Row),
-    nth0(J, Columns, Column),
-    is_square_line_constraint(I, J, Row, LineWidth, 1),
-    is_square_line_constraint(J, I, Column, LineHeight, 1),
+square_constraints(I, J, Rows, SquareSize) :-
+    NewI is I + 1,
+    NewJ is J + 1,
+    square_lines_constraints(I, J, Rows, SquareSize),
+    InnerSquareSize #= SquareSize - 1,  
+    square_constraints(NewI, NewJ, Rows, InnerSquareSize).
 
-    (LineWidth #= LineHeight) #=> (
-        LineSize #= LineWidth,
-        NewLineSize #= LineSize - 1,
-        NewI is I + 1, 
-        NewJ is I + 1, 
-        is_square_constraint(NewI, NewJ, Rows, NewLineSize, 1)
-    ).
+square_lines_constraints(_, J, Rows, _) :-
+    length(Rows, Length),   
+    J == Length.       
 
-is_square_line_constraint(I, Line, LineSize, Value) :-
-    is_square_line_constraint(I, Line, LineSize, Value, 1).
-
-is_square_line_constraint(_, _, _, _ , 0).  % Cell is different from value
-
-is_square_line_constraint(Index, Line, LineSize, Value, 1) :-
-    nth0(Index, Line, Cell),
-    Cell #= Value #<=> IsValue,                                       % Check if cell is filled or not filled
-    LineSize #= S + IsValue,                                          % line length decrement
-    NewIndex is Index + 1,                                            % Update cell in
-    is_square_line_constraint(NewIndex, Line, S, Value, IsValue).
+square_lines_constraints(I, J, Rows, SquareSize) :-
+    length(Line, SquareSize),
+    sum(Line, #=, SquareSize)    
+.
