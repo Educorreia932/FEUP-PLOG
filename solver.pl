@@ -64,7 +64,7 @@ find_square(I, J, Rows, Size) :-
     get_cell(I, LeftJ, Rows, LeftCell),
     LeftCell #= 0 #<=> IsLeftBlank,
 
-    % Upper left cell
+    % Upper left cell   
     
     get_cell(TopI, LeftJ, Rows, TopLeftCell),
     TopLeftCell #= 0 #<=> IsTopLeftBlank,
@@ -73,10 +73,9 @@ find_square(I, J, Rows, Size) :-
     square_constraints(I, J, Rows, SquareSize),
     SquareSize #>= 0 #<=> IsSquare,
 
-    NextI is I + 1,
     NextJ is J + 1,
     
-    find_square(NextI, NextJ, Rows, Size).   
+    find_square(I, NextJ, Rows, Size).   
 
 square_constraints(_, J, Rows, _) :-
     length(Rows, Length),   
@@ -92,4 +91,4 @@ square_lines_constraints(I, J, Rows, IsSquare) :-
     get_cell(BottomI, J, Rows, BottomCell),
     get_cell(I, RightJ, Rows, RightCell),
     % Verificar interior
-    ((BottomI - I #= RightJ - J) #/\ (BottomI - I #>= 0) #/\ (RightJ - J #>= 0) #/\ (BottomCell #= RightCell)) #<=> IsSquare.
+    ((BottomI - I #= RightJ - J) #/\ (BottomI - I #>= 0) #/\ (RightJ - J #>= 0) ) #<=> IsSquare.
