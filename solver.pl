@@ -43,11 +43,11 @@ line_constraints([FilledCells|T1], [GridLine|T2]) :-
 
 find_square(Size, _, _, Size).
 
-find_square(I, size, _, Size) :-        % Next row
+find_square(I, Size, _, Size) :-        % Next row
     NewI is I + 1,  
     find_square(NewI, 0, _, Size).
 
-find_square(I, J, Rows, _) :-
+find_square(I, J, Rows, Size) :-
     get_cell(I, J, Rows, Cell),                                      
 
     Cell #= 1 #<=> IsFilled,                   % If cell is filled  
@@ -71,7 +71,12 @@ find_square(I, J, Rows, _) :-
 
     (IsFilled #/\ IsTopBlank #/\ IsLeftBlank #/\ IsTopLeftBlank) #<=> IsSquare, % Is top left corner of a cell
     square_constraints(I, J, Rows, SquareSize),
-    SquareSize #>= 0 #<=> IsSquare.   
+    SquareSize #>= 0 #<=> IsSquare,
+
+    NextI is I + 1,
+    NextJ is J + 1,
+    
+    find_square(NextI, NextJ, Rows, Size).   
 
 square_constraints(_, J, Rows, _) :-
     length(Rows, Length),   
