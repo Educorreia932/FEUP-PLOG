@@ -64,9 +64,21 @@ find_square(I, Size, _, Indexes,Size) :-        % Next row
     find_square(NewI, 0, _, Indexes, Size).
 
 find_square(I, J, Rows, Indexes, Size) :-
+    square_constraint(I, J, Rows, Indexes),
+
+    NextJ is J + 1,
+    
+    find_square(I, NextJ, Rows, Indexes, Size).   
+
+square_constraint(I, J, Rows, Indexes) :-
+    isUpperLeftCorner(I, J, Rows, IsUpperLeftCorner),
+    isSquare(I, J, Rows, Indexes, IsSquare),
+    IsUpperLeftCorner #=> IsSquare.
+
+isUpperLeftCorner(I, J, Rows, IsUpperLeftCorner) :-
     get_cell(I, J, Rows, Cell),                                      
 
-    Cell #= 1 #<=> IsFilled,                    % If cell is filled  
+    Cell #= 1 #<=> IsFilled,
 
     % Top cell
 
@@ -85,22 +97,15 @@ find_square(I, J, Rows, Indexes, Size) :-
     get_cell(TopI, LeftJ, Rows, TopLeftCell),
     TopLeftCell #= 0 #<=> IsTopLeftBlank,
 
-    (IsFilled #/\ IsTopBlank #/\ IsLeftBlank #/\ IsTopLeftBlank) #<=> IsSquare, % Is top left corner of a cell
-    square_constraints(I, J, Rows, Indexes, IsSquare),
+    (IsFilled #/\ IsTopBlank #/\ IsLeftBlank #/\ IsTopLeftBlank) #=> IsUpperLeftCorner.
 
-    NextJ is J + 1,
-    
-    find_square(I, NextJ, Rows, Indexes, Size).   
+isSquare(I, J, Rows, Indexes, IsSquare) :-
+    BottomI - I + 1 #= Height,
+    RightJ - J + 1 #= Width,
 
-square_constraints(I, J, Rows, Indexes, IsSquare) :-
-    square_lines_constraints(I, J, Rows, Indexes, IsSquare).
-
-square_lines_constraints(I, J, Rows, Indexes, IsSquare) :-
     get_cell(BottomI, J, Rows, BottomCell),
     get_cell(I, RightJ, Rows, RightCell),
 
-    BottomI - I + 1 #= Height,
-    RightJ - J + 1 #= Width,
     SquareArea #= Height * Width,
     SquarePerimeter #= (Height + 2) * (Width + 2) - SquareArea,
 
@@ -131,10 +136,10 @@ square_lines_constraints(I, J, Rows, Indexes, IsSquare) :-
 
         BorderCell #<=> (
             (
-                (IndexI #= I1 #/\ IndexJ #>= J1 #/\ IndexJ #=< J2) #\            % Top border
-                (IndexI #= BottomI #/\ IndexJ #>= J1 #/\ IndexJ #=< J2) #\       % Bottom border
-                (IndexJ #= J1 #/\ IndexI #>= I1 #/\ IndexI #=< I2) #\            % Left border
-                (IndexJ #= RightJ #/\ IndexI #>= I1 #/\ IndexI #=< I2)           % Right border
+                (IndexI #= I1 #/\ IndexJ #>= J1 #/\ IndexJ #=< J2) #\           % Top border
+                (IndexI #= I2 #/\ IndexJ #>= J1 #/\ IndexJ #=< J2) #\           % Bottom border
+                (IndexJ #= J1 #/\ IndexI #>= I1 #/\ IndexI #=< I2) #\           % Left border
+                (IndexJ #= J2 #/\ IndexI #>= I1 #/\ IndexI #=< I2)              % Right border
             ) #/\       
 
             Cell #= 0
@@ -148,4 +153,4 @@ square_lines_constraints(I, J, Rows, Indexes, IsSquare) :-
         (BottomCell #= 1) #/\ (RightCell #= 1) #/\
         NumFilledCells #= SquareArea #/\
         NumBorderCells #= SquarePerimeter
-    ) #<=> IsSquare.
+    ) #=> IsSquare.
