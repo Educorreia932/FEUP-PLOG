@@ -5,47 +5,22 @@
 solve(RowsNumbers, ColumnsNumbers, Rows) :-
     % Domain and variables definition
 
-    length(RowsNumbers, Size),           % Get size of square
-    generate_grid(Rows, Size),           % Generate grid representing square
-    generate_indexes(Indexes, Size),     % Generate grid representing square
+    length(RowsNumbers, Size),                      % Get size of square
+    generate_grid(Rows, Size),                      % Generate grid representing square
+    generate_indexes(Indexes, Size),                % Generate cells indexes
 
     % Constraints
     
-    transpose(Rows, Columns),
-    % line_constraints(RowsNumbers, Rows),
-    line_constraints(ColumnsNumbers, Columns),
-    find_square(0, 0, Rows, Indexes, Size),
+    transpose(Rows, Columns),                       % Transpose rows matrix to get columns
+    line_constraints(RowsNumbers, Rows),            % Apply row constraints
+    line_constraints(ColumnsNumbers, Columns),      % Apply columns constraints
+    square_constraint(0, 0, Rows, Indexes, Size),   % Apply square constraints
 
     % Solution search
     
     flatten(Rows, Vars),
     labeling([], Vars).
 
-generate_grid(Grid, Size) :-
-    generate_grid(Grid, Size, Size).
-
-generate_grid([], _, 0).
-
-generate_grid([GridRow|T], Size, Counter) :-
-    C is Counter - 1,
-    length(GridRow, Size),
-    domain(GridRow, 0, 1),
-    generate_grid(T, Size, C).
-
-generate_indexes(Indexes, Size) :-
-    generate_indexes(Indexes, 0, 0, Size).
-
-generate_indexes([], I, _, Size) :-
-    I == Size.
-
-generate_indexes(Indexes, I, J, Size) :-
-    J == Size,
-    NewI is I + 1,
-    generate_indexes(Indexes, NewI, 0, Size).
-
-generate_indexes([[I, J]|T], I, J, Size) :-
-    NewJ is J + 1,
-    generate_indexes(T, I, NewJ, Size).
 
 % Line constraints
 
@@ -57,100 +32,97 @@ line_constraints([FilledCells|T1], [GridLine|T2]) :-
 
 % Square constraints
 
-find_square(Size, _, _, _, Size).
+square_constraint(Size, _, _, _, Size).                 % Reached end of grid
 
-find_square(I, Size, _, Indexes,Size) :-        % Next row
-    NewI is I + 1,  
-    find_square(NewI, 0, _, Indexes, Size).
+square_constraint(I, Size, Rows, Indexes, Size) :-      % Reached end of row
+    NewI is I + 1,                                      % Skip to next row
+    square_constraint(NewI, 0, Rows, Indexes, Size).
 
-find_square(I, J, Rows, Indexes, Size) :-
-    square_constraint(I, J, Rows, Indexes),
-
-    NextJ is J + 1,
-    
-    find_square(I, NextJ, Rows, Indexes, Size).   
-
-square_constraint(I, J, Rows, Indexes) :-
+square_constraint(I, J, Rows, Indexes, Size) :-
     isUpperLeftCorner(I, J, Rows, IsUpperLeftCorner),
     isSquare(I, J, Rows, Indexes, IsSquare),
-    IsUpperLeftCorner #=> IsSquare.
+    IsUpperLeftCorner #=> IsSquare, 
+
+    NextJ is J + 1,
+    square_constraint(I, NextJ, Rows, Indexes, Size).
 
 isUpperLeftCorner(I, J, Rows, IsUpperLeftCorner) :-
     get_cell(I, J, Rows, Cell),                                      
-
-    Cell #= 1 #<=> IsFilled,
+    (Cell #= 1) #<=> IsFilled,
 
     % Top cell
 
     TopI is I - 1,
     get_cell(TopI, J, Rows, TopCell),
-    TopCell #= 0 #<=> IsTopBlank,
+    (TopCell #= 0) #<=> IsTopBlank,
     
     % Left cell
     
     LeftJ is J - 1,
     get_cell(I, LeftJ, Rows, LeftCell),
-    LeftCell #= 0 #<=> IsLeftBlank,
+    (LeftCell #= 0) #<=> IsLeftBlank,
 
     % Upper left cell   
     
     get_cell(TopI, LeftJ, Rows, TopLeftCell),
-    TopLeftCell #= 0 #<=> IsTopLeftBlank,
+    (TopLeftCell #= 0) #<=> IsTopLeftBlank,
 
     (IsFilled #/\ IsTopBlank #/\ IsLeftBlank #/\ IsTopLeftBlank) #=> IsUpperLeftCorner.
 
-isSquare(I, J, Rows, Indexes, IsSquare) :-
-    BottomI - I + 1 #= Height,
-    RightJ - J + 1 #= Width,
+isSquare(FirstI, FirstJ, Rows, Indexes, IsSquare) :-
+    BottomI - FirstI + 1 #= Height,                             % Last row - first row + 1 = height                    
+    RightJ - FirstJ + 1 #= Width,                               % Last column - first column + 1 = width
 
-    get_cell(BottomI, J, Rows, BottomCell),
-    get_cell(I, RightJ, Rows, RightCell),
+    get_cell(BottomI, RightJ, Rows, BottomRightCorner),         % Get Bottom right corner                    
+    get_cell(FirstI, FirstJ, Rows, UpperLeftCorner),            % Get Upper left corner
 
-    SquareArea #= Height * Width,
-    SquarePerimeter #= (Height + 2) * (Width + 2) - SquareArea,
+    SquareArea #= Height * Width,                               % Square Area must be Height * width
+    SquareBorder #= (Height + 2) * (Width + 2) - SquareArea,    % Number of cells of the squares border
 
     (
-        foreach([IndexI, IndexJ], Indexes),
-        foreach(FilledCell, FilledCells),
-        foreach(BorderCell, BorderCells),
-        param(I),
+        foreach([I, J], Indexes),           % Iterate Indexes
+        foreach(FilledCell, FilledCells),   % Iterate FilledCells
+        foreach(BorderCell, BorderCells),   % Iterate BorderCells
+        param(FirstI),              
         param(BottomI),
-        param(J),
+        param(FirstJ),
         param(RightJ),
         param(Rows)
     do
-        get_cell(IndexI, IndexJ, Rows, Cell),
+        get_cell(I, J, Rows, Cell),         % Get current cells                  
         
-        FilledCell #<=> (
-            IndexI #>= I #/\
-            IndexI #=< BottomI #/\
-            IndexJ #>= J #/\
-            IndexJ #=< RightJ #/\
-            Cell #= 1
+        FilledCell #<=> (                   % Set Filled Cell value
+            I #>= FirstI #/\                % I is greater than or equal to first row's index
+            I #=< BottomI #/\               % I is less than or equal to last row's index
+            J #>= FirstJ #/\                % J is greater or equal to first column's index
+            J #=< RightJ #/\                % J is less than or equal to last column's index
+            Cell #= 1                       % Cell is filled
         ),
 
-        I1 #= I - 1, % Top
-        J1 #= J - 1, % Left
-        I2 #= I + 1, % Bottom
-        J2 #= J + 1, % Right 
+        I1 #= FirstI - 1,  % Top
+        J1 #= FirstJ - 1,  % Left
+        I2 #= BottomI + 1, % Bottom
+        J2 #= RightJ + 1,  % Right 
 
         BorderCell #<=> (
             (
-                (IndexI #= I1 #/\ IndexJ #>= J1 #/\ IndexJ #=< J2) #\           % Top border
-                (IndexI #= I2 #/\ IndexJ #>= J1 #/\ IndexJ #=< J2) #\           % Bottom border
-                (IndexJ #= J1 #/\ IndexI #>= I1 #/\ IndexI #=< I2) #\           % Left border
-                (IndexJ #= J2 #/\ IndexI #>= I1 #/\ IndexI #=< I2)              % Right border
+                (I #= I1 #/\ J #>= J1 #/\ J #=< J2) #\    % Cell is at Top border
+                (I #= I2 #/\ J #>= J1 #/\ J #=< J2) #\    % Cell is at Bottom border
+                (J #= J1 #/\ I #>= I1 #/\ I #=< I2) #\    % Cell is at Left border
+                (J #= J2 #/\ I #>= I1 #/\ I #=< I2)       % Cell is at Right border
             ) #/\       
 
-            Cell #= 0
+            Cell #= 0   % Border of square must be empty -> disjoint squares
         )
+
     ),
-    sum(FilledCells, #=, NumFilledCells),
-    sum(BorderCells, #=, NumBorderCells),
+
+    sum(FilledCells, #=, NumFilledCells),   % Constraint number of filled cells
+    sum(BorderCells, #=, NumBorderCells),   % Constraint number of border cells
 
     (
-        (Height #= Width) #/\ (Height #>= 0) #/\ (Width #>= 0) #/\ 
-        (BottomCell #= 1) #/\ (RightCell #= 1) #/\
-        NumFilledCells #= SquareArea #/\
-        NumBorderCells #= SquarePerimeter
+        (Height #= Width) #/\ (Height #>= 1) #/\ (Width #>= 1) #/\  % Width & Height constraints
+        (BottomRightCorner #= 1) #/\ (UpperLeftCorner #= 1) #/\     % Corners constraints
+        (NumFilledCells #= SquareArea) #/\                          % Number of filled cells constraints
+        (NumBorderCells #= SquareBorder)                            % Number of border cells constraints
     ) #=> IsSquare.
