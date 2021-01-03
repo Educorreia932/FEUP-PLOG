@@ -2,30 +2,49 @@
 
 :- include('utils.pl').
 
+fd_length(L, N) :-
+   N #>= 0,
+   fd_length(L, N, 0).
+
+fd_length([], N, N0) :-
+   N #= N0.
+
+fd_length([_|L], N, N0) :-
+   N1 is N0+1,
+   N #>= N1,
+   fd_length(L, N, N1).
+
 solve(Blocked, Rows, Columns, Vars) :-
     % Domain and variables definition
 
     length(Rows, Size),   
 
-    MaxNumSquares is Size * Size,                
-    NumSquares #>= 0,                               
-    NumSquares #< MaxNumSquares,      
+    NumSquares #> 11,
 
-    length(StartsX, NumSquares),                    
-    length(StartsY, NumSquares),                   
-    length(SquareSizes, NumSquares),                
-
+    fd_length(StartsX, NumSquares),
+    fd_length(StartsY, NumSquares),                   
+    fd_length(SquareSizes, NumSquares),              
+    
     S is Size - 1,           
                            
     domain(StartsX, 0, S),                         
     domain(StartsY, 0, S),                          
-    domain(SquareSizes, 1, Size),                  
+    domain(SquareSizes, 1, Size),    
+
+    (
+        foreach(X, StartsX), 
+        foreach(Y, StartsY), 
+        foreach([X, Y], StartsXY) 
+    do 
+        true
+    ), lex_chain(StartsXY),              
 
     construct_squares(Size, StartsX, StartsY, SquareSizes, Squares), 
 
     % Constraints
 
     disjoint2(Squares, [margin(0, 0, 1, 1)]),
+    
     lines_constraints(0, Rows, StartsX, SquareSizes),
     lines_constraints(0, Columns, StartsY, SquareSizes),
 
@@ -52,20 +71,19 @@ lines_constraints(Index, [NumFilledCells|T], Starts, SquareSizes) :-
     lines_constraints(I, T, Starts, SquareSizes).
 
 line_constraints(Index, NumFilledCells, Starts, SquareSizes) :-
-    findall(
-        SquareSize,
-        (
-            element(N, Starts, Start),  
-            element(N, SquareSizes, SquareSize),  
-            intersect(Index, Start, SquareSize)
-        ),
-        Lines),
-    sum(Lines, #=, NumFilledCells).
+    (
+        foreach(Start, Starts),
+        foreach(SquareSize, SquareSizes),
+        foreach(Usage, Usages),
+        param(Index)
+    do
+        Intersect #<=> (Start #=< Index #/\ Index #< Start + SquareSize),
+        Usage #= Intersect * SquareSize
+    ),
+    sum(Usages, #=, NumFilledCells).
     
 % Check if a square intersects a row or column
 
 intersect(Index, Start, SquareSize) :-
     Start #=< Index,
     Index #=< Start + SquareSize.
-
-
