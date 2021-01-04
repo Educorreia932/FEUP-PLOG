@@ -26,3 +26,17 @@ print_columns_numbers([ColumnNumber|T]) :-
     print_columns_numbers(T).
 
 
+print_solution(StartsX, StartsY, SquareSizes) :-
+    nl,
+    print('X    : '),
+    print_list(StartsX), 
+    print('Y    : '),
+    print_list(StartsY), 
+    print('Sizes: '),
+    print_list(SquareSizes), 
+    nl.
+
+print_list([]) :- nl.
+print_list([H|T]) :-
+    print(H), print('   '),
+    print_list(T).

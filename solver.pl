@@ -38,8 +38,8 @@ solve(NumSquares, Rows, Columns) :-
 
     VarsList = [NumSquares, StartsX, StartsY, SquareSizes],
     flatten(VarsList, Vars),
-    labeling([], Vars)
-    .
+    labeling([], Vars),
+    print_solution(StartsX, StartsY, SquareSizes).
 
 construct_squares(_, [], [], [], []). 
 
