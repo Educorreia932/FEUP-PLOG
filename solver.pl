@@ -11,7 +11,7 @@ solve(RowsNumbers, ColumnsNumbers, Rows) :-
     % Constraints
     
     transpose(Rows, Columns),                       % Transpose rows matrix to get columns
-    % line_constraints(RowsNumbers, Rows),            % Apply row constraints
+    line_constraints(RowsNumbers, Rows),            % Apply row constraints
     line_constraints(ColumnsNumbers, Columns),      % Apply columns constraints
     square_constraint(0, 0, Rows, Columns, Size),   % Apply square constraints
 
@@ -73,28 +73,46 @@ is_square(I, J, Rows, Columns, Size, IsSquare) :-
     TopI is I - 1,                          % Diagonal line index
     LeftJ is J - 1,                         % Diagonal column index
 
-    is_square_outline(TopI, LeftJ, Rows, Columns, Size, 0, IsBorder, BorderSize), % Constraint square border
-    is_square_interior(I, J, Rows, Columns, IsInterior, SquareSize),             % Constraint square interior
+    is_square_outline(TopI, LeftJ, Rows, Columns, Size, 0, IsBorder, BorderSize),          % Constraint square border
+    is_square_interior(I, J, Rows, Columns, Size, IsInterior, SquareSize, SquareSize),     % Constraint square interior
     
-    (IsBorder #/\ (BorderSize #= SquareSize + 2)) #<=> IsSquare.
+    (IsBorder #/\ IsInterior #/\ (BorderSize #>= SquareSize + 2)) #<=> IsSquare.
 
-is_square_interior(I, J, Rows, Columns, Size, IsInterior, SquareSize, Counter) :-
-    is_square_outline(I, J, Rows, Columns, Size, 1, IsOutline, S),
+is_square_interior(_, _, _, _, _, _, 0).
+
+is_square_interior(I, J, Rows, Columns, Size, IsInterior, SquareSize) :-
+    is_square_outline(I, J, Rows, Columns, Size, 1, IsOutline, Width),
+    IsOutline #=> SquareSize #= Width,
+    IsInterior #<=> IsOutline #\/ (SquareSize #< 0),
+
     BottomI is I + 1,
     RightJ is J + 1,
-    IsOutline #=> (SquareSize #= S),
     SmallerSquareSize #= SquareSize - 1,
-    Counter #= (SquareSize #> 0),
     is_square_interior(BottomI, RightJ, Rows, Columns, Size, IsInterior, SmallerSquareSize).
+
+is_border(I, J, Rows, Columns, Size, IsBorder, BorderLen) :-
+    is_square_line(I, J, Rows, Size, Width, 0),             % Get Square Width
+    is_square_line(I, J, Columns, Size, Height, 0),         % Get Square Height
+
+    get_cell(I, J, Rows, Cell),
+
+    (
+        Cell #= 0 #/\
+        Height #>= BorderLen #/\ 
+        Width #>= BorderLen #/\ 
+    ) #<=> IsBorder.
 
 is_square_outline(I, J, Rows, Columns, Size, Value, IsOutline, Width) :-
     is_square_line(I, J, Rows, Size, Width, Value),             % Get Square Width
     is_square_line(I, J, Columns, Size, Height, Value),         % Get Square Height
     
+    get_cell(I, J, Rows, Cell),                                 % Get current cell
+
     % IsOutline is true if Width = Height
     (
-        Height #>= 1 #/\ 
-        Width #>= 1 #/\ 
+        Cell #= Value #/\
+        Height #>= 0 #/\ 
+        Width #>= 0 #/\ 
         Height #= Width
     ) #<=> IsOutline. 
 
@@ -112,9 +130,9 @@ is_square_line(_, Size, _, Size, _, Counter, Counter, _).
 
 is_square_line(I, J, Rows, Size, CellBefore, Counter, Length, Value) :-
     get_cell(I, J, Rows, Cell),                      % Get current cell
-    Cell #= Value #/\ CellBefore #<=> IsValue,      % Current Cell is filled if it is 1 and the cell before was filled too
+    Cell #= Value #/\ CellBefore #<=> IsValue,       % Current Cell is filled if it is 1 and the cell before was filled too
     
     NewCounter #= Counter + IsValue,                % Update length
-    NewJ is J + 1,                                   % Update column 
+    NewJ is J + 1,                                  % Update column 
     
     is_square_line(I, NewJ, Rows, Size, IsValue, NewCounter, Length, Value).   % Recursion  

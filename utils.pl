@@ -14,7 +14,6 @@ generate_grid([GridRow|T], Size, Counter) :-
     domain(GridRow, 0, 1),
     generate_grid(T, Size, C).
 
-
 % Generate indexes from cells in grid
 
 generate_indexes(Indexes, Size) :-
@@ -29,7 +28,6 @@ generate_indexes(Indexes, I, Size, Size) :-     % Reached last column
 generate_indexes([[I, J]|T], I, J, Size) :-     % Iterating the columns of row 
     NewJ is J + 1,
     generate_indexes(T, I, NewJ, Size).
-
 
 % Trim N elements from a list
 
