@@ -8,8 +8,8 @@
 % ==================================================
 
 test_puzzle1 :-
-    puzzle1(Blocked, Rows, Columns),
-    solve(Blocked, Rows, Columns, Square),
+    puzzle1(NumSquares, Rows, Columns),
+    solve(NumSquares, Rows, Columns),
     Solution = [
         [1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
         [0, 0, 1, 0, 0, 0, 0, 1, 0, 0],
@@ -22,7 +22,7 @@ test_puzzle1 :-
         [0, 1, 1, 1, 0, 0, 0, 0, 0, 0],
         [0, 1, 1, 1, 0, 0, 0, 0, 1, 0]
     ],
-    print(Square).
+    print_square(Rows, Columns, Solution).
 
 test_puzzle2 :-
     puzzle2(Blocked, Rows, Columns),

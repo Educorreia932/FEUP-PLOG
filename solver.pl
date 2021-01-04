@@ -2,28 +2,14 @@
 
 :- include('utils.pl').
 
-fd_length(L, N) :-
-   N #>= 0,
-   fd_length(L, N, 0).
-
-fd_length([], N, N0) :-
-   N #= N0.
-
-fd_length([_|L], N, N0) :-
-   N1 is N0+1,
-   N #>= N1,
-   fd_length(L, N, N1).
-
-solve(Blocked, Rows, Columns, Vars) :-
+solve(NumSquares, Rows, Columns) :-
     % Domain and variables definition
 
     length(Rows, Size),   
 
-    NumSquares #> 11,
-
-    fd_length(StartsX, NumSquares),
-    fd_length(StartsY, NumSquares),                   
-    fd_length(SquareSizes, NumSquares),              
+    length(StartsX, NumSquares),
+    length(StartsY, NumSquares),                   
+    length(SquareSizes, NumSquares),              
     
     S is Size - 1,           
                            
@@ -52,7 +38,8 @@ solve(Blocked, Rows, Columns, Vars) :-
 
     VarsList = [NumSquares, StartsX, StartsY, SquareSizes],
     flatten(VarsList, Vars),
-    labeling([], Vars).
+    labeling([], Vars)
+    .
 
 construct_squares(_, [], [], [], []). 
 
@@ -82,8 +69,3 @@ line_constraints(Index, NumFilledCells, Starts, SquareSizes) :-
     ),
     sum(Usages, #=, NumFilledCells).
     
-% Check if a square intersects a row or column
-
-intersect(Index, Start, SquareSize) :-
-    Start #=< Index,
-    Index #=< Start + SquareSize.
