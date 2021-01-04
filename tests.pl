@@ -25,8 +25,8 @@ test_puzzle1 :-
     print_square(Rows, Columns, Solution).
 
 test_puzzle2 :-
-    puzzle2(Blocked, Rows, Columns),
-    solve(Blocked, Rows, Columns, Square),
+    puzzle2(NumSquares, Rows, Columns),
+    solve(NumSquares, Rows, Columns),
     Solution = [
         [1, 0, 1, 0, 1, 1, 0, 0, 0, 0],
         [0, 0, 0, 0, 1, 1, 0, 1, 0, 1],
@@ -39,11 +39,11 @@ test_puzzle2 :-
         [0, 0, 0, 0, 0, 0, 1, 1, 1, 1],
         [0, 1, 0, 0, 0, 0, 1, 1, 1, 1]
     ],
-    Solution == Square.
+    print_square(Rows, Columns, Solution).
 
 test_puzzle3 :-
-    puzzle3(Blocked, Rows, Columns),
-    solve(Blocked, Rows, Columns, Square),
+    puzzle3(NumSquares, Rows, Columns),
+    solve(NumSquares, Rows, Columns),
     Solution = [
         [0, 0, 0, 0, 0, 1, 1, 0, 1, 0],
         [0, 0, 0, 0, 0, 1, 1, 0, 0, 0],
@@ -56,11 +56,11 @@ test_puzzle3 :-
         [0, 1, 0, 1, 1, 0, 0, 0, 0, 0],
         [0, 0, 0, 1, 1, 0, 1, 0, 0, 0]
     ],
-    Solution == Square.
+    print_square(Rows, Columns, Solution).
 
 test_puzzle4 :-
-    puzzle4(Blocked, Rows, Columns),
-    solve(Blocked, Rows, Columns, Square),
+    puzzle4(NumSquares, Rows, Columns),
+    solve(NumSquares, Rows, Columns),
     Solution = [
         [1, 1, 1, 1, 1, 0, 1, 0, 1, 1],
         [1, 1, 1, 1, 1, 0, 0, 0, 1, 1],
@@ -73,11 +73,11 @@ test_puzzle4 :-
         [0, 0, 1, 0, 1, 1, 0, 0, 0, 0],
         [0, 0, 0, 0, 1, 1, 0, 1, 0, 0]
     ],
-    Solution == Square.
+    print_square(Rows, Columns, Solution).
 
 test_puzzle5 :- 
-    puzzle5(Blocked, Rows, Columns),
-    solve(Blocked, Rows, Columns, Square),
+    puzzle5(NumSquares, Rows, Columns),
+    solve(NumSquares, Rows, Columns),
     Solution = [
         [1, 1, 1, 0, 1, 0, 1, 1, 1, 0],
         [1, 1, 1, 0, 0, 0, 1, 1, 1, 0],
@@ -90,11 +90,11 @@ test_puzzle5 :-
         [0, 0, 1, 1, 0, 1, 1, 0, 0, 1],
         [0, 0, 1, 1, 0, 1, 1, 0, 0, 0]
     ],
-    Solution == Square.
+    print_square(Rows, Columns, Solution).
 
 test_puzzle6 :-
-    puzzle6(Blocked, Rows, Columns),
-    solve(Blocked, Rows, Columns, Square),
+    puzzle6(NumSquares, Rows, Columns),
+    solve(NumSquares, Rows, Columns),
     Solution = [
         [0, 0, 0, 0, 0, 0, 0, 0, 1, 0],
         [0, 0, 0, 1, 0, 1, 0, 0, 0, 1],
@@ -107,12 +107,11 @@ test_puzzle6 :-
         [0, 0, 1, 0, 0, 0, 1, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 1, 0]
     ],
-    print(Square).
-    % Solution == Square.
+    print_square(Rows, Columns, Solution).
 
 test_puzzle7 :-
-    puzzle7(Blocked, Rows, Columns),
-    solve(Blocked, Rows, Columns, Square),
+    puzzle7(NumSquares, Rows, Columns),
+    solve(NumSquares, Rows, Columns),
     Solution = [
         [0, 1, 0, 0, 0, 1, 0, 0, 1, 1],
         [0, 0, 0, 0, 0, 0, 0, 0, 1, 1],
@@ -125,11 +124,11 @@ test_puzzle7 :-
         [1, 1, 0, 0, 0, 1, 1, 1, 0, 0],
         [1, 1, 0, 0, 0, 1, 1, 1, 0, 0]
     ],
-    Solution == Square.
+    print_square(Rows, Columns, Solution).
 
 test_puzzle8 :-
-    puzzle8(Blocked, Rows, Columns),
-    solve(Blocked, Rows, Columns, Square),
+    puzzle8(NumSquares, Rows, Columns),
+    solve(NumSquares, Rows, Columns),
     Solution = [
         [0, 0, 1, 0, 1, 0, 1, 0, 0, 0],
         [1, 0, 0, 0, 0, 0, 0, 0, 1, 1],
@@ -142,11 +141,11 @@ test_puzzle8 :-
         [1, 1, 1, 1, 0, 1, 1, 0, 1, 1],
         [1, 1, 1, 1, 0, 1, 1, 0, 0, 0]
     ],
-    Solution == Square.
+    print_square(Rows, Columns, Solution).
 
 test_puzzle9 :-
-    puzzle9(Blocked, Rows, Columns),
-    solve(Blocked, Rows, Columns, Square),
+    puzzle9(NumSquares, Rows, Columns),
+    solve(NumSquares, Rows, Columns),
     Solution = [
         [1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0],
         [1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1],
@@ -164,4 +163,4 @@ test_puzzle9 :-
         [0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0]
     ],
-    Solution == Square.
+    print_square(Rows, Columns, Solution).

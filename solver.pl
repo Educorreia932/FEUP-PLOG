@@ -3,6 +3,9 @@
 :- include('utils.pl').
 
 solve(NumSquares, Rows, Columns) :-
+
+    statistics(runtime, [Start|_]),
+    
     % Domain and variables definition
 
     length(Rows, Size),   
@@ -39,7 +42,15 @@ solve(NumSquares, Rows, Columns) :-
     VarsList = [NumSquares, StartsX, StartsY, SquareSizes],
     flatten(VarsList, Vars),
     labeling([], Vars),
-    print_solution(StartsX, StartsY, SquareSizes).
+
+    statistics(runtime, [Stop|_]),
+    Runtime is Stop - Start,
+
+    % Print Answer
+    nl,
+    format(' > Solving Time: ~3d s~n', [Runtime]),
+    print_solution(StartsX, StartsY, SquareSizes), nl.
+
 
 construct_squares(_, [], [], [], []). 
 

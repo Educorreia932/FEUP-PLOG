@@ -28,11 +28,11 @@ print_columns_numbers([ColumnNumber|T]) :-
 
 print_solution(StartsX, StartsY, SquareSizes) :-
     nl,
-    print('X    : '),
+    print('Row   : '),
     print_list(StartsX), 
-    print('Y    : '),
+    print('Column: '),
     print_list(StartsY), 
-    print('Sizes: '),
+    print('Sizes : '),
     print_list(SquareSizes), 
     nl.
 
