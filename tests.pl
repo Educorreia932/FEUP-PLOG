@@ -8,7 +8,7 @@
 % ==================================================
 
 test_puzzle1 :-
-    puzzle1(Blocked, Rows, Columns),
+    puzzle1(Rows, Columns),
     solve(Rows, Columns, Square),
     Solution = [
         [1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
@@ -22,11 +22,14 @@ test_puzzle1 :-
         [0, 1, 1, 1, 0, 0, 0, 0, 0, 0],
         [0, 1, 1, 1, 0, 0, 0, 0, 1, 0]
     ],
-    print_square(Rows, Columns, Square), nl.
+    nl, print('Result:'), nl,
+    print_square(Rows, Columns, Square), nl,
+    nl, print('Expected:'), nl,
+    print_square(Rows, Columns, Solution), nl.
 
 test_puzzle2 :-
-    puzzle2(Blocked, Rows, Columns),
-    solve(Blocked, Rows, Columns, Square),
+    puzzle2(Rows, Columns),
+    solve(Rows, Columns, Square),
     Solution = [
         [1, 0, 1, 0, 1, 1, 0, 0, 0, 0],
         [0, 0, 0, 0, 1, 1, 0, 1, 0, 1],
@@ -39,11 +42,14 @@ test_puzzle2 :-
         [0, 0, 0, 0, 0, 0, 1, 1, 1, 1],
         [0, 1, 0, 0, 0, 0, 1, 1, 1, 1]
     ],
-    Solution == Square.
+    nl, print('Result:'), nl,
+    print_square(Rows, Columns, Square), nl,
+    nl, print('Expected:'), nl,
+    print_square(Rows, Columns, Solution), nl.
 
 test_puzzle3 :-
-    puzzle3(Blocked, Rows, Columns),
-    solve(Blocked, Rows, Columns, Square),
+    puzzle3(Rows, Columns),
+    solve(Rows, Columns, Square),
     Solution = [
         [0, 0, 0, 0, 0, 1, 1, 0, 1, 0],
         [0, 0, 0, 0, 0, 1, 1, 0, 0, 0],
@@ -56,11 +62,14 @@ test_puzzle3 :-
         [0, 1, 0, 1, 1, 0, 0, 0, 0, 0],
         [0, 0, 0, 1, 1, 0, 1, 0, 0, 0]
     ],
-    Solution == Square.
+    nl, print('Result:'), nl,
+    print_square(Rows, Columns, Square), nl,
+    nl, print('Expected:'), nl,
+    print_square(Rows, Columns, Solution), nl.
 
 test_puzzle4 :-
-    puzzle4(Blocked, Rows, Columns),
-    solve(Blocked, Rows, Columns, Square),
+    puzzle4(Rows, Columns),
+    solve(Rows, Columns, Square),
     Solution = [
         [1, 1, 1, 1, 1, 0, 1, 0, 1, 1],
         [1, 1, 1, 1, 1, 0, 0, 0, 1, 1],
@@ -73,11 +82,14 @@ test_puzzle4 :-
         [0, 0, 1, 0, 1, 1, 0, 0, 0, 0],
         [0, 0, 0, 0, 1, 1, 0, 1, 0, 0]
     ],
-    Solution == Square.
+    nl, print('Result:'), nl,
+    print_square(Rows, Columns, Square), nl,
+    nl, print('Expected:'), nl,
+    print_square(Rows, Columns, Solution), nl.
 
 test_puzzle5 :- 
-    puzzle5(Blocked, Rows, Columns),
-    solve(Blocked, Rows, Columns, Square),
+    puzzle5(Rows, Columns),
+    solve(Rows, Columns, Square),
     Solution = [
         [1, 1, 1, 0, 1, 0, 1, 1, 1, 0],
         [1, 1, 1, 0, 0, 0, 1, 1, 1, 0],
@@ -90,29 +102,14 @@ test_puzzle5 :-
         [0, 0, 1, 1, 0, 1, 1, 0, 0, 1],
         [0, 0, 1, 1, 0, 1, 1, 0, 0, 0]
     ],
-    Solution == Square.
+    nl, print('Result:'), nl,
+    print_square(Rows, Columns, Square), nl,
+    nl, print('Expected:'), nl,
+    print_square(Rows, Columns, Solution), nl.
 
 test_puzzle6 :-
-    puzzle6(Blocked, Rows, Columns),
-    solve(Blocked, Rows, Columns, Square),
-    Solution = [
-        [0, 0, 0, 0, 0, 0, 0, 0, 1, 0],
-        [0, 0, 0, 1, 0, 1, 0, 0, 0, 1],
-        [0, 1, 0, 0, 0, 0, 0, 1, 0, 0],
-        [0, 0, 0, 1, 0, 1, 0, 0, 0, 1],
-        [0, 1, 0, 0, 0, 0, 0, 1, 0, 0],
-        [0, 0, 0, 0, 1, 0, 0, 0, 0, 1],
-        [0, 0, 1, 0, 0, 0, 0, 1, 0, 0],
-        [1, 0, 0, 0, 1, 0, 0, 0, 0, 1],
-        [0, 0, 1, 0, 0, 0, 1, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 1, 0]
-    ],
-    print(Square).
-    % Solution == Square.
-
-test_puzzle7 :-
-    puzzle7(Blocked, Rows, Columns),
-    solve(Blocked, Rows, Columns, Square),
+    puzzle6(Rows, Columns),
+    solve(Rows, Columns, Square),
     Solution = [
         [0, 1, 0, 0, 0, 1, 0, 0, 1, 1],
         [0, 0, 0, 0, 0, 0, 0, 0, 1, 1],
@@ -125,11 +122,14 @@ test_puzzle7 :-
         [1, 1, 0, 0, 0, 1, 1, 1, 0, 0],
         [1, 1, 0, 0, 0, 1, 1, 1, 0, 0]
     ],
-    Solution == Square.
+    nl, print('Result:'), nl,
+    print_square(Rows, Columns, Square), nl,
+    nl, print('Expected:'), nl,
+    print_square(Rows, Columns, Solution), nl.
 
-test_puzzle8 :-
-    puzzle8(Blocked, Rows, Columns),
-    solve(Blocked, Rows, Columns, Square),
+test_puzzle7 :-
+    puzzle7(Rows, Columns),
+    solve(Rows, Columns, Square),
     Solution = [
         [0, 0, 1, 0, 1, 0, 1, 0, 0, 0],
         [1, 0, 0, 0, 0, 0, 0, 0, 1, 1],
@@ -142,11 +142,14 @@ test_puzzle8 :-
         [1, 1, 1, 1, 0, 1, 1, 0, 1, 1],
         [1, 1, 1, 1, 0, 1, 1, 0, 0, 0]
     ],
-    Solution == Square.
+    nl, print('Result:'), nl,
+    print_square(Rows, Columns, Square), nl,
+    nl, print('Expected:'), nl,
+    print_square(Rows, Columns, Solution), nl.
 
-test_puzzle9 :-
-    puzzle9(Blocked, Rows, Columns),
-    solve(Blocked, Rows, Columns, Square),
+test_puzzle8 :-
+    puzzle8(Rows, Columns),
+    solve(Rows, Columns, Square),
     Solution = [
         [1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0],
         [1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1],
@@ -164,4 +167,7 @@ test_puzzle9 :-
         [0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0]
     ],
-    Solution == Square.
+    nl, print('Result:'), nl,
+    print_square(Rows, Columns, Square), nl,
+    nl, print('Expected:'), nl,
+    print_square(Rows, Columns, Solution), nl.

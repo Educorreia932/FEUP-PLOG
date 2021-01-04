@@ -3,6 +3,8 @@
 :- include('utils.pl').
 
 solve(RowsNumbers, ColumnsNumbers, Rows) :-
+    statistics(runtime, [Start|_]),
+
     % Domain and variables definition
 
     length(RowsNumbers, Size),                      % Get size of square
@@ -18,7 +20,11 @@ solve(RowsNumbers, ColumnsNumbers, Rows) :-
     % Solution search
     
     flatten(Rows, Vars),
-    labeling([], Vars).
+    labeling([], Vars),
+    
+    statistics(runtime, [Stop|_]),
+    Runtime is Stop - Start,
+    format(' > Solving time: ~3d s~n', [Runtime]).
 
 % Line constraints
 
@@ -74,7 +80,7 @@ is_square(I, J, Rows, Columns, Size, IsSquare) :-
     LeftJ is J - 1,                         % Diagonal column index
 
     is_square_outline(TopI, LeftJ, Rows, Columns, Size, 0, IsBorder, BorderSize),          % Constraint square border
-    is_square_interior(I, J, Rows, Columns, Size, IsInterior, SquareSize, SquareSize),     % Constraint square interior
+    is_square_interior(I, J, Rows, Columns, Size, IsInterior, SquareSize),     % Constraint square interior
     
     (IsBorder #/\ IsInterior #/\ (BorderSize #>= SquareSize + 2)) #<=> IsSquare.
 
@@ -99,7 +105,7 @@ is_border(I, J, Rows, Columns, Size, IsBorder, BorderLen) :-
     (
         Cell #= 0 #/\
         Height #>= BorderLen #/\ 
-        Width #>= BorderLen #/\ 
+        Width #>= BorderLen
     ) #<=> IsBorder.
 
 is_square_outline(I, J, Rows, Columns, Size, Value, IsOutline, Width) :-
