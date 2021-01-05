@@ -29,13 +29,6 @@ generate_indexes([[I, J]|T], I, J, Size) :-     % Iterating the columns of row
     NewJ is J + 1,
     generate_indexes(T, I, NewJ, Size).
 
-% Trim N elements from a list
-
-trim(L, N, S) :-         
-    length(P, N),        % Generate an unbound prefix list of the desired length
-    append(P, S, L).     % Get the desired suffix.
-
-
 % Flattens a list by one level
 
 flatten([], []).
@@ -48,7 +41,6 @@ flatten([A|B], L) :-
 
 flatten([A|B], [A|B1]) :- 
     flatten(B, B1).
-
 
 % Get cell at Iᵗʰ row and Jᵗʰ column
 

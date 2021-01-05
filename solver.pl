@@ -3,8 +3,6 @@
 :- include('utils.pl').
 
 solve(RowsNumbers, ColumnsNumbers, Rows) :-
-    statistics(runtime, [Start|_]),
-
     % Domain and variables definition
 
     length(RowsNumbers, Size),                      % Get size of square
@@ -20,11 +18,7 @@ solve(RowsNumbers, ColumnsNumbers, Rows) :-
     % Solution search
     
     flatten(Rows, Vars),
-    labeling([], Vars),
-    
-    statistics(runtime, [Stop|_]),
-    Runtime is Stop - Start,
-    format(' > Solving time: ~3d s~n', [Runtime]).
+    labeling([], Vars).
 
 % Line constraints
 
@@ -36,10 +30,10 @@ line_constraints([FilledCells|T1], [GridLine|T2]) :-
 
 % Square constraints
 
-square_constraint(Size, _, _, _, Size).                 % Reached end of grid
+square_constraint(Size, _, _, _, Size).                     % Reached end of grid
 
-square_constraint(I, Size, Rows, Columns, Size) :-      % Reached end of row
-    NewI is I + 1,                                      % Skip to next row
+square_constraint(I, Size, Rows, Columns, Size) :-          % Reached end of row
+    NewI is I + 1,                                          % Skip to next row
     square_constraint(NewI, 0, Rows, Columns, Size).
 
 square_constraint(I, J, Rows, Columns, Size) :-
@@ -53,92 +47,71 @@ square_constraint(I, J, Rows, Columns, Size) :-
 % Check if cell is upper left corner 
 
 is_upper_left_corner(I, J, Rows, IsUpperLeftCorner) :-
-    % Get current cell
-
-    get_cell(I, J, Rows, Cell),                 
-
-    % Get Top cell
+    get_cell(I, J, Rows, Cell),                 % Get current cell
 
     TopI is I - 1,
-    get_cell(TopI, J, Rows, TopCell),           
-    
-    % Get Left cell
+    get_cell(TopI, J, Rows, TopCell),           % Get cell above
     
     LeftJ is J - 1,
-    get_cell(I, LeftJ, Rows, LeftCell),         
-
-    % Get Upper left cell   
+    get_cell(I, LeftJ, Rows, LeftCell),         % Get left cell
     
-    get_cell(TopI, LeftJ, Rows, TopLeftCell),  
+    get_cell(TopI, LeftJ, Rows, TopLeftCell),   % Get diagonal cell
 
     (Cell #= 1 #/\ TopCell #= 0 #/\ LeftCell #= 0 #/\ TopLeftCell #= 0) #<=> IsUpperLeftCorner.
 
 % Check if there is a square
 
 is_square(I, J, Rows, Columns, Size, IsSquare) :-
-    TopI is I - 1,                          % Diagonal line index
-    LeftJ is J - 1,                         % Diagonal column index
-
-    is_square_outline(TopI, LeftJ, Rows, Columns, Size, 0, IsBorder, BorderSize),          % Constraint square border
-    is_square_interior(I, J, Rows, Columns, Size, IsInterior, SquareSize),     % Constraint square interior
+    square_line(I, J, Rows, Size, Width, 1),
     
-    (IsBorder #/\ IsInterior #/\ (BorderSize #>= SquareSize + 2)) #<=> IsSquare.
+    TopI is I - 1,
+    LeftJ is J - 1,
 
-is_square_interior(_, _, _, _, _, _, 0).
-
-is_square_interior(I, J, Rows, Columns, Size, IsInterior, SquareSize) :-
-    is_square_outline(I, J, Rows, Columns, Size, 1, IsOutline, Width),
-    IsOutline #=> SquareSize #= Width,
-    IsInterior #<=> IsOutline #\/ (SquareSize #< 0),
+    square_line(TopI, LeftJ, Rows, Size, BorderWidth, 0),
+    square_line(TopI, LeftJ, Columns, Size, BorderHeight, 0),
 
     BottomI is I + 1,
-    RightJ is J + 1,
-    SmallerSquareSize #= SquareSize - 1,
-    is_square_interior(BottomI, RightJ, Rows, Columns, Size, IsInterior, SmallerSquareSize).
 
-is_border(I, J, Rows, Columns, Size, IsBorder, BorderLen) :-
-    is_square_line(I, J, Rows, Size, Width, 0),             % Get Square Width
-    is_square_line(I, J, Columns, Size, Height, 0),         % Get Square Height
+    square_interior(BottomI, J, Rows, Columns, Size, Width, 1, Height),
 
-    get_cell(I, J, Rows, Cell),
+    IsSquare #<=> (
+        Height #= Width - 1 #/\ 
+        BorderWidth #>= Width + 2 #/\ 
+        BorderHeight #>= Width + 2
+    ).
 
-    (
-        Cell #= 0 #/\
-        Height #>= BorderLen #/\ 
-        Width #>= BorderLen
-    ) #<=> IsBorder.
+square_interior(Size, _, _, _, Size, Width, _, Width).
 
-is_square_outline(I, J, Rows, Columns, Size, Value, IsOutline, Width) :-
-    is_square_line(I, J, Rows, Size, Width, Value),             % Get Square Width
-    is_square_line(I, J, Columns, Size, Height, Value),         % Get Square Height
-    
-    get_cell(I, J, Rows, Cell),                                 % Get current cell
+square_interior(I, J, Rows, Columns, Size, Width, Before, Counter) :-
+    square_line(I, J, Rows, Size, Length, 1),
 
-    % IsOutline is true if Width = Height
-    (
-        Cell #= Value #/\
-        Height #>= 0 #/\ 
-        Width #>= 0 #/\ 
-        Height #= Width
-    ) #<=> IsOutline. 
+    IsSquareLine #= ((Length #= Width) #/\ Before),
+    NewCounter #= Counter + IsSquareLine,
+    NewI is I + 1,
+
+    square_interior(NewI, J, Rows, Columns, Size, Width, IsSquareLine, NewCounter).
 
 % Gets Square Size with top left corner at I row and J column
 
-is_square_line(I, J, Rows, Size, Length, Value) :-
+square_line(I, J, Rows, Size, Length, Value) :-
     NextJ is J + 1,
-    is_square_line(I, NextJ, Rows, Size, 1, 1, Length, Value).
+    CellBefore #= 1,
+    Counter #= 1,
+    square_line(I, NextJ, Rows, Size, CellBefore, Counter, Length, Value).
 
-% Reached end of line - Update length
+% Reached end of line - update length
 
-is_square_line(_, Size, _, Size, _, Counter, Counter, _).     
+square_line(_, Size, _, Size, _, Length, Length, _).
 
 % Count filled consecutive cells
 
-is_square_line(I, J, Rows, Size, CellBefore, Counter, Length, Value) :-
-    get_cell(I, J, Rows, Cell),                      % Get current cell
-    Cell #= Value #/\ CellBefore #<=> IsValue,       % Current Cell is filled if it is 1 and the cell before was filled too
+square_line(I, J, Rows, Size, CellBefore, Counter, Length, Value) :-
+    get_cell(I, J, Rows, Cell),                        
+    IsValue #<=> ((Cell #= Value) #/\ CellBefore),     
     
-    NewCounter #= Counter + IsValue,                % Update length
-    NewJ is J + 1,                                  % Update column 
+    NewCounter #= Counter + IsValue,                
+    NewJ is J + 1,                                   
     
-    is_square_line(I, NewJ, Rows, Size, IsValue, NewCounter, Length, Value).   % Recursion  
+    square_line(I, NewJ, Rows, Size, IsValue, NewCounter, Length, Value).  
+    
+    
