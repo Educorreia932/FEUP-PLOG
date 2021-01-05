@@ -13,9 +13,23 @@ solve(RowsNumbers, ColumnsNumbers, Rows) :-
     transpose(Rows, Columns),                       % Transpose rows matrix to get columns
     %line_constraints(RowsNumbers, Rows),            % Apply row constraints
     %line_constraints(ColumnsNumbers, Columns),      % Apply columns constraints
-    %square_constraint(0, 0, Rows, Columns, Size),   % Apply square constraints
 
-    is_square(3, 2, Rows, Columns, Size, 1),
+    is_upper_left_corner(0, 0, Rows, 1), 
+    is_square(0, 0, Rows, Columns, Size, 1),
+
+    is_upper_left_corner(0, 9, Rows, 1), 
+    is_square(0, 9, Rows, Columns, Size, 1),
+
+    is_upper_left_corner(1, 2, Rows, 1), 
+    is_square(1, 2, Rows, Columns, Size, 1),
+
+    is_upper_left_corner(2, 0, Rows, 1), 
+    is_square(2, 0, Rows, Columns, Size, 1),
+
+    is_upper_left_corner(4, 0, Rows, 1), 
+    is_square(4, 0, Rows, Columns, Size, 1),
+
+    square_constraint(0, 0, Rows, Columns, Size),   % Apply square constraints
 
     % Solution search
     
@@ -64,23 +78,27 @@ is_upper_left_corner(I, J, Rows, IsUpperLeftCorner) :-
 % Check if there is a square
 
 is_square(I, J, Rows, Columns, Size, IsSquare) :-
-    Width #= 5,
     square_line(I, J, Rows, Size, Width, 1),
     
     TopI is I - 1,
     LeftJ is J - 1,
 
-    square_line(TopI, LeftJ, Rows, Size, BorderWidth, 0),
-    square_line(TopI, LeftJ, Columns, Size, BorderHeight, 0),
+    square_line(TopI, J, Rows, Size, BorderWidth, 0),
+    square_line(LeftJ, I, Columns, Size, BorderHeight, 0),
 
     BottomI is I + 1,
 
-    square_interior(BottomI, J, Rows, Size, Width, 1, 0),
+    Before #<=> Width #>= 1,
+
+    square_interior(BottomI, J, Rows, Size, Width, Before, 0), 
 
     IsSquare #<=> (
-        BorderWidth #>= Width + 2 #/\ 
-        BorderHeight #>= Width + 2
+        Before #/\ 
+        BorderWidth #>= Width #/\
+        BorderHeight #>= Width 
     ).
+
+square_interior(Size, _, _, Size, 0, _, 0).
 
 square_interior(Size, _, _, Size, Width, _, Counter) :-
     Counter #= Width - 1.
@@ -101,8 +119,7 @@ square_line(I, J, Rows, Size, Length, Value) :-
 
 % Reached end of line - update length
 
-square_line(_, J, _, Size, _, Length, Length, _) :-
-    J is Size + 1.
+square_line(_, Size, _, Size, _, Length, Length, _).
 
 % Count filled consecutive cells
 
