@@ -11,9 +11,11 @@ solve(RowsNumbers, ColumnsNumbers, Rows) :-
     % Constraints
     
     transpose(Rows, Columns),                       % Transpose rows matrix to get columns
-    line_constraints(RowsNumbers, Rows),            % Apply row constraints
-    line_constraints(ColumnsNumbers, Columns),      % Apply columns constraints
-    square_constraint(0, 0, Rows, Columns, Size),   % Apply square constraints
+    %line_constraints(RowsNumbers, Rows),            % Apply row constraints
+    %line_constraints(ColumnsNumbers, Columns),      % Apply columns constraints
+    %square_constraint(0, 0, Rows, Columns, Size),   % Apply square constraints
+
+    is_square(3, 2, Rows, Columns, Size, 1),
 
     % Solution search
     
@@ -62,6 +64,7 @@ is_upper_left_corner(I, J, Rows, IsUpperLeftCorner) :-
 % Check if there is a square
 
 is_square(I, J, Rows, Columns, Size, IsSquare) :-
+    Width #= 5,
     square_line(I, J, Rows, Size, Width, 1),
     
     TopI is I - 1,
@@ -72,36 +75,34 @@ is_square(I, J, Rows, Columns, Size, IsSquare) :-
 
     BottomI is I + 1,
 
-    square_interior(BottomI, J, Rows, Columns, Size, Width, 1, Height),
+    square_interior(BottomI, J, Rows, Size, Width, 1, 0),
 
     IsSquare #<=> (
-        Height #= Width - 1 #/\ 
         BorderWidth #>= Width + 2 #/\ 
         BorderHeight #>= Width + 2
     ).
 
-square_interior(Size, _, _, _, Size, Width, _, Width).
+square_interior(Size, _, _, Size, Width, _, Counter) :-
+    Counter #= Width - 1.
 
-square_interior(I, J, Rows, Columns, Size, Width, Before, Counter) :-
+square_interior(I, J, Rows, Size, Width, Before, Counter) :-
     square_line(I, J, Rows, Size, Length, 1),
 
     IsSquareLine #= ((Length #= Width) #/\ Before),
     NewCounter #= Counter + IsSquareLine,
     NewI is I + 1,
 
-    square_interior(NewI, J, Rows, Columns, Size, Width, IsSquareLine, NewCounter).
+    square_interior(NewI, J, Rows, Size, Width, IsSquareLine, NewCounter).
 
-% Gets Square Size with top left corner at I row and J column
+% Gets square size with top left corner at I row and J column
 
 square_line(I, J, Rows, Size, Length, Value) :-
-    NextJ is J + 1,
-    CellBefore #= 1,
-    Counter #= 1,
-    square_line(I, NextJ, Rows, Size, CellBefore, Counter, Length, Value).
+    square_line(I, J, Rows, Size, 1, 0, Length, Value).
 
 % Reached end of line - update length
 
-square_line(_, Size, _, Size, _, Length, Length, _).
+square_line(_, J, _, Size, _, Length, Length, _) :-
+    J is Size + 1.
 
 % Count filled consecutive cells
 
@@ -113,5 +114,4 @@ square_line(I, J, Rows, Size, CellBefore, Counter, Length, Value) :-
     NewJ is J + 1,                                   
     
     square_line(I, NewJ, Rows, Size, IsValue, NewCounter, Length, Value).  
-    
     
