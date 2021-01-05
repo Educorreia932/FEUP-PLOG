@@ -24,8 +24,8 @@ test_puzzle1 :-
     ],
     nl, print('Result:'), nl,
     print_square(Rows, Columns, Square), nl.
-    % nl, print('Expected:'), nl,
-    % print_square(Rows, Columns, Solution), nl.
+    nl, print('Expected:'), nl,
+    print_square(Rows, Columns, Solution), nl.
 
 test_puzzle2 :-
     puzzle2(Rows, Columns),

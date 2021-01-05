@@ -18,13 +18,6 @@ print_row([1|T], RowNumber) :-         % Filled cell
     print(' '),
     print_row(T, RowNumber).
 
-<<<<<<< HEAD:display.pl
-print_row(['X'|T], RowNumber) :-       % Blocked cell
-    put_code(9746),
-    print(' '),
-    print_row(T, RowNumber).
-=======
->>>>>>> disjointApproach:Second Approach/display.pl
 
 print_columns_numbers([]).
 
