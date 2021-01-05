@@ -18,13 +18,32 @@ print_row([1|T], RowNumber) :-         % Filled cell
     print(' '),
     print_row(T, RowNumber).
 
+<<<<<<< HEAD:display.pl
 print_row(['X'|T], RowNumber) :-       % Blocked cell
     put_code(9746),
     print(' '),
     print_row(T, RowNumber).
+=======
+>>>>>>> disjointApproach:Second Approach/display.pl
 
 print_columns_numbers([]).
 
 print_columns_numbers([ColumnNumber|T]) :-
     print(ColumnNumber), print(' '),
     print_columns_numbers(T).
+
+
+print_solution(StartsX, StartsY, SquareSizes) :-
+    nl,
+    print('Row   : '),
+    print_list(StartsX), 
+    print('Column: '),
+    print_list(StartsY), 
+    print('Sizes : '),
+    print_list(SquareSizes), 
+    nl.
+
+print_list([]) :- nl.
+print_list([H|T]) :-
+    print(H), print('   '),
+    print_list(T).

@@ -2,12 +2,20 @@
 
 :- include('utils.pl').
 
+<<<<<<< HEAD:solver.pl
 solve(RowsNumbers, ColumnsNumbers, Rows) :-
+=======
+solve(NumSquares, Rows, Columns) :-
+
+    statistics(runtime, [Start|_]),
+    
+>>>>>>> disjointApproach:Second Approach/solver.pl
     % Domain and variables definition
 
     length(RowsNumbers, Size),                      % Get size of square
     generate_grid(Rows, Size),                      % Generate grid representing square
 
+<<<<<<< HEAD:solver.pl
     % Constraints
     
     transpose(Rows, Columns),                       % Transpose rows matrix to get columns
@@ -19,6 +27,25 @@ solve(RowsNumbers, ColumnsNumbers, Rows) :-
 
     is_upper_left_corner(0, 9, Rows, 1), 
     is_square(0, 9, Rows, Columns, Size, 1),
+=======
+    length(StartsX, NumSquares),
+    length(StartsY, NumSquares),                   
+    length(SquareSizes, NumSquares),              
+    
+    S is Size - 1,           
+                           
+    domain(StartsX, 0, S),                         
+    domain(StartsY, 0, S),                          
+    domain(SquareSizes, 1, Size),    
+
+    (
+        foreach(X, StartsX), 
+        foreach(Y, StartsY), 
+        foreach([X, Y], StartsXY) 
+    do 
+        true
+    ), lex_chain(StartsXY),              
+>>>>>>> disjointApproach:Second Approach/solver.pl
 
     is_upper_left_corner(1, 2, Rows, 1), 
     is_square(1, 2, Rows, Columns, Size, 1),
@@ -26,15 +53,37 @@ solve(RowsNumbers, ColumnsNumbers, Rows) :-
     is_upper_left_corner(2, 0, Rows, 1), 
     is_square(2, 0, Rows, Columns, Size, 1),
 
+<<<<<<< HEAD:solver.pl
     is_upper_left_corner(4, 0, Rows, 1), 
     is_square(4, 0, Rows, Columns, Size, 1),
+=======
+    disjoint2(Squares, [margin(0, 0, 1, 1)]),
+    
+    lines_constraints(0, Rows, StartsX, SquareSizes),
+    lines_constraints(0, Columns, StartsY, SquareSizes),
+>>>>>>> disjointApproach:Second Approach/solver.pl
 
     square_constraint(0, 0, Rows, Columns, Size),   % Apply square constraints
 
+<<<<<<< HEAD:solver.pl
     % Solution search
     
     flatten(Rows, Vars),
     labeling([], Vars).
+=======
+    VarsList = [NumSquares, StartsX, StartsY, SquareSizes],
+    flatten(VarsList, Vars),
+    labeling([], Vars),
+
+    statistics(runtime, [Stop|_]),
+    Runtime is Stop - Start,
+
+    % Print Answer
+    nl,
+    format(' > Solving Time: ~3d s~n', [Runtime]),
+    print_solution(StartsX, StartsY, SquareSizes), nl.
+
+>>>>>>> disjointApproach:Second Approach/solver.pl
 
 % Line constraints
 
@@ -77,6 +126,7 @@ is_upper_left_corner(I, J, Rows, IsUpperLeftCorner) :-
 
 % Check if there is a square
 
+<<<<<<< HEAD:solver.pl
 is_square(I, J, Rows, Columns, Size, IsSquare) :-
     square_line(I, J, Rows, Size, Width, 1),
     
@@ -131,4 +181,17 @@ square_line(I, J, Rows, Size, CellBefore, Counter, Length, Value) :-
     NewJ is J + 1,                                   
     
     square_line(I, NewJ, Rows, Size, IsValue, NewCounter, Length, Value).  
+=======
+line_constraints(Index, NumFilledCells, Starts, SquareSizes) :-
+    (
+        foreach(Start, Starts),
+        foreach(SquareSize, SquareSizes),
+        foreach(Usage, Usages),
+        param(Index)
+    do
+        Intersect #<=> (Start #=< Index #/\ Index #< Start + SquareSize),
+        Usage #= Intersect * SquareSize
+    ),
+    sum(Usages, #=, NumFilledCells).
+>>>>>>> disjointApproach:Second Approach/solver.pl
     
